@@ -1,0 +1,4 @@
+db_creds.yaml
+do_not_track/
+*.yaml
+*.env

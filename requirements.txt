@@ -1,2 +1,6 @@
-PyYAML # To read YAML files. YAML parser and emitter.
 yamllint # Command-Line Linters.
+PyYAML # To read YAML files. YAML parser and emitter.
+psycopg2-binary # a standalone and self-contained distribution of the psycopg2 library
+sqlalchemy # this ORM will transform the python objects into SQL tables
+pandas # pandas dataframe
+

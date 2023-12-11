@@ -5,38 +5,55 @@ import numpy as np
 import nbformat
 import plotly.express as px
 import missingno as msno
+import re
+from dateutil.parser import parse # to help with datatime edits
+
 
 class DataCleaning:
     
     @staticmethod
     def clean_user_data(selected_table_df):
 
+    # filtering mask created
+        condition_to_exclude = (
+            selected_table_df['first_name'].astype(str).str.contains('\d|NULL') |
+            selected_table_df['last_name'].astype(str).str.contains('\d|NULL') |
+            selected_table_df['country'].astype(str).str.contains('\d|NULL')
+            )
+        
+        # Apply the filter and convert the specified columns to string datatype
+        legacy_users_df_filtered = selected_table_df[~condition_to_exclude].astype({'first_name': 'string', 'last_name': 'string', 'country': 'string'})
 
+        legacy_users_df_filtered['country'] = legacy_users_df_filtered['country'].astype('category')
+            
+        # Replace 'GGB' with 'GB'
+        legacy_users_df_filtered['country_code'] = legacy_users_df_filtered['country_code'].replace({'GGB': 'GB'})
+        legacy_users_df_filtered['country_code'] = legacy_users_df_filtered['country_code'].astype('category')
 
+        # Assuming 'join_date' is a column in 'date_of_birth'
+        legacy_users_df_filtered['date_of_birth'] = legacy_users_df_filtered['date_of_birth'].apply(parse)
+        legacy_users_df_filtered['join_date'] = legacy_users_df_filtered['join_date'].apply(parse)
 
+        # Now, convert both columns to datetime
+        legacy_users_df_filtered['date_of_birth'] = pd.to_datetime(legacy_users_df_filtered['date_of_birth'], errors='coerce')
+        legacy_users_df_filtered['join_date'] = pd.to_datetime(legacy_users_df_filtered['join_date'], errors='coerce')
 
-    
-    @staticmethod
-    def clean_user_data(selected_table_df):
-        # Drop duplicate rows
-        selected_table_df = selected_table_df.drop_duplicates()
+        legacy_users_df_filtered['company'] = legacy_users_df_filtered['company'].astype('category')
 
-        # Handle missing values (replace NaNs with a specified value or strategy)
-        selected_table_df = selected_table_df.fillna(0)  # Replace NaNs with 0, for example
+        legacy_users_df_filtered['email_address'] = legacy_users_df_filtered['email_address'].astype('string')
 
-        # Convert data types if needed (e.g., convert a column to datetime)
-        selected_table_df['date_column'] = pd.to_datetime(selected_table_df['date_column'], errors='coerce')
+        # Change the data type of 'user_uuid' column to 'string'
+        legacy_users_df_filtered['user_uuid'] = legacy_users_df_filtered['user_uuid'].astype('string')
 
-        # Remove outliers (you may need a more sophisticated approach based on your data)
-        selected_table_df = DataCleaning.remove_outliers(selected_table_df, 'numeric_column')
+        # Define a function to clean phone numbers and convert to string
+        def clean_and_convert_to_string(phone_numbers):
+            # Remove non-numeric characters, except '(', ')', and '+'
+            cleaned_number = re.sub(r'[^0-9()+]+', '', phone_numbers)
+            return cleaned_number
 
-        # Perform additional cleaning steps based on your specific requirements
+        # Apply the cleaning function and convert to string
+        legacy_users_df_filtered['phone_number'] = legacy_users_df_filtered['phone_number'].apply(clean_and_convert_to_string).astype(str)
 
-        return selected_table_df
+        return legacy_users_df_filtered
 
-    @staticmethod
-    def remove_outliers(df, column_name, z_threshold=3):
-        # Remove outliers using Z-score
-        z_scores = (df[column_name] - df[column_name].mean()) / df[column_name].std()
-        df_no_outliers = df[(z_scores.abs() < z_threshold) | z_scores.isna()]
-        return df_no_outliers
+   

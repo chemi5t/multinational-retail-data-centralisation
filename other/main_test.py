@@ -62,7 +62,7 @@ def setup_and_extract_data(): # Step 1: Specify the correct file path
         with open(notebook_file, 'w') as nb_file:
             nbformat.write(notebook, nb_file)
         
-        return selected_table_df
+        return selected_table_df, selected_table
 
     except (ValueError, IndexError):
         print("Invalid input. Please enter a valid number corresponding to the table.")
@@ -85,3 +85,15 @@ if __name__ == "__main__":
         cleaned_table_df.to_csv(cleaned_csv_filename, index=False)
         print(f"Saved cleaned {selected_table} DataFrame as {cleaned_csv_filename}")
 
+if __name__ == "__main__":
+    selected_table, selected_table_df = setup_and_extract_data()
+ 
+    # Clean the selected table DataFrame
+    cleaned_table_df = dcl.clean_user_data(selected_table_df)
+    print("Cleaned DataFrame:")
+    print(cleaned_table_df)
+
+    # Save the cleaned DataFrame as a CSV file
+    cleaned_csv_filename = f"cleaned_{selected_table}_data.csv"
+    cleaned_table_df.to_csv(cleaned_csv_filename, index=False)
+    print(f"Saved cleaned {selected_table} DataFrame as {cleaned_csv_filename}")

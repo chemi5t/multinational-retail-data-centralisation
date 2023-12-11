@@ -20,24 +20,25 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
     
     # Display the list of tables to the user
     # Available Tables: ['legacy_store_details', 'legacy_users', 'orders_table']  
-    print("Available Tables:")
+    print("\nAvailable Tables: \n")
     for i, table_name in enumerate(tables, 1):
         print(f"{i}. {table_name}")
 
     # Get user input for table selection
-    print("Table 2. 'legacy_users': shall be extracted: ")
+   
     table_index = 2
     selected_index = table_index - 1
     selected_table = tables[selected_index]
+    print(f"\nTable 2. '{selected_table}', shall be extracted. \n")
 
     # Step 5: Read the selected table into a pandas DataFrame
     selected_table_df = data_extractor.read_rds_table(selected_table, engine)
 
     # Display the DataFrame
-    print(selected_table_df)
+    print(selected_table_df, "\n")
 
     # Save the DataFrame as a CSV file
-    csv_filename = f"{selected_table}_data_test.csv"
+    csv_filename = f"{selected_table}_data.csv"
     selected_table_df.to_csv(csv_filename, index=False)
     print(f"Saved {selected_table} DataFrame as {csv_filename}")
 
@@ -57,25 +58,24 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
     notebook.cells.append(code_cell)
 
     # Save the notebook to a .ipynb file with a name based on the selected table
-    notebook_file = f"{selected_table}_data_test.ipynb"
+    notebook_file = f"{selected_table}_data.ipynb"
     with open(notebook_file, 'w') as nb_file:
         nbformat.write(notebook, nb_file)
+        print(f"Saved {selected_table} DataFrame as {selected_table}_data.ipynb\n")
+    
     
     return selected_table_df, selected_table
 
 
 if __name__ == "__main__":
-    selected_table, selected_table_df = setup_and_extract_data()
- 
+    selected_table_df, selected_table = setup_and_extract_data()
+
     # Clean the selected table DataFrame
     cleaned_table_df = dcl.clean_user_data(selected_table_df)
-    print("Cleaned DataFrame:")
-    print(cleaned_table_df)
+    print(f"\nCleaned {selected_table} DataFrame: \n")
+    print(cleaned_table_df, "\n")
 
     # Save the cleaned DataFrame as a CSV file
-    cleaned_csv_filename = f"cleaned_{selected_table}_data.csv"
+    cleaned_csv_filename = f"{selected_table}_data_cleaned.csv"
     cleaned_table_df.to_csv(cleaned_csv_filename, index=False)
-    print(f"Saved cleaned {selected_table} DataFrame as {cleaned_csv_filename}")
-
-
-
+    print(f"Saved cleaned {selected_table} DataFrame as {cleaned_csv_filename}.")

@@ -5,4 +5,5 @@ sqlalchemy # this ORM will transform the python objects into SQL tables
 pandas # pandas dataframe
 nbformat # to save in ipynb
 missingno # Visualising Missing Data
-plotly.express # Visualising histogram
+plotly.express # Visualising 
+pip install scikit-learn # for uploading df to your postgres

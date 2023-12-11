@@ -1,5 +1,6 @@
 import yaml # to read .yaml. Help with read_db_creds
 from sqlalchemy import create_engine # this ORM will transform the python objects into SQL tables
+from sklearn.datasets import load_iris
 
 class DatabaseConnector:
 
@@ -11,12 +12,16 @@ class DatabaseConnector:
     
     @staticmethod
     def init_db_engine(credentials):
-        engine = create_engine(f"{credentials['RDS_DATABASE_TYPE']}+{credentials['RDS_DBAPI']}://{credentials['RDS_USER']}:{credentials['RDS_PASSWORD']}@{credentials['RDS_HOST']}:{credentials['RDS_PORT']}/{credentials['RDS_DATABASE']}")
-        return engine
+        engine = create_engine(f"{credentials['DATABASE_TYPE']}+{credentials['RDS_DBAPI']}://{credentials['RDS_USER']}:{credentials['RDS_PASSWORD']}@{credentials['RDS_HOST']}:{credentials['RDS_PORT']}/{credentials['RDS_DATABASE']}")
+        engine2 = create_engine(f"{credentials['RDS_DATABASE_TYPE']}+{credentials['DBAPI']}://{credentials['USER']}:{credentials['PASSWORD']}@{credentials['HOST']}:{credentials['PORT']}/{credentials['DATABASE']}")
+
+        return engine, engine2
     
-    # database_utils.py
-    def upload_to_db(df, table_name):
-        pass
+    @staticmethod
+    def upload_to_db(selected_table_df, selected_table, engine2):
+        selected_table_df.to_sql(selected_table, engine2, if_exists='replace', index=False)
+        print(f"Data uploaded to table '{selected_table}'.")
+
 
 
 

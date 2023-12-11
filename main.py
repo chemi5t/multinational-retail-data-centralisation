@@ -1,18 +1,18 @@
 from database_utils import DatabaseConnector as dc
 from data_extraction import DataExtractor as dex
 from data_cleaning import DataCleaning as dcl
-import missingno as msno # Visualising Missing Data
-import plotly.express as px # Visualising histogram
-
+# import missingno as msno # Visualising Missing Data
+# import plotly.express as px # Visualising histogram
 
 import pandas as pd
-import numpy as np
+# import numpy as np
 import nbformat # save as .ipynb
+
 
 def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the correct file path
     database_connector = dc()
     credentials = database_connector.read_db_creds(file_path)    # Step 2: Read credentials
-    engine = database_connector.init_db_engine(credentials)      # Step 3: Initialise database engine
+    engine, engine2 = database_connector.init_db_engine(credentials)      # Step 3: Initialise database engine
     data_extractor = dex()
 
     # Step 4: List all tables in the database
@@ -64,11 +64,11 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
         print(f"Saved {selected_table} DataFrame as {selected_table}_data.ipynb\n")
     
     
-    return selected_table_df, selected_table
+    return selected_table_df, selected_table, engine2
 
 
 if __name__ == "__main__":
-    selected_table_df, selected_table = setup_and_extract_data()
+    selected_table_df, selected_table, engine2 = setup_and_extract_data()
 
     # Clean the selected table DataFrame
     cleaned_table_df = dcl.clean_user_data(selected_table_df)
@@ -79,3 +79,6 @@ if __name__ == "__main__":
     cleaned_csv_filename = f"{selected_table}_data_cleaned.csv"
     cleaned_table_df.to_csv(cleaned_csv_filename, index=False)
     print(f"Saved cleaned {selected_table} DataFrame as {cleaned_csv_filename}.")
+
+    # Upload the cleaned data to the database
+    dc.upload_to_db(cleaned_table_df, 'dim_users', engine2)

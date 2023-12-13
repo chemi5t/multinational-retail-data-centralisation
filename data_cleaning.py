@@ -55,5 +55,7 @@ class DataCleaning:
         legacy_users_df_filtered['phone_number'] = legacy_users_df_filtered['phone_number'].apply(clean_and_convert_to_string).astype(str)
 
         return legacy_users_df_filtered
-
-   
+ 
+    @staticmethod
+    def clean_card_data (card_data_df):
+        pass

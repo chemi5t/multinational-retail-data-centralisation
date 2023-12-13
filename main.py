@@ -66,6 +66,28 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
     
     return selected_table_df, selected_table, engine2
 
+def save_dataframe(card_details_df): # Step 1: Specify the correct file path
+
+    # Save the DataFrame as a CSV file
+    csv_filename = f"{selected_table}_data.csv"
+    selected_table_df.to_csv(csv_filename, index=False)
+    print(f"Saved {selected_table} DataFrame as {csv_filename}")
+
+    # Create a new notebook
+    notebook = nbformat.v4.new_notebook()
+    # Add a code cell for the table to the notebook
+    code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
+                                            f"from database_utils import DatabaseConnector as dc\n\n"
+                                            f"database_connector = dc()\n"
+                                            f"credentials = database_connector.read_db_creds('{file_path}')\n"
+                                            f"engine = database_connector.init_db_engine(credentials)\n\n"
+                                            f"# Import data from '{selected_table}' table into DataFrame\n"
+                                            f"{selected_table}_df = pd.read_sql('{selected_table}', engine)\n\n"
+                                            f"# Display the DataFrame\n"
+                                            f"{selected_table}_df")
+                                            
+    notebook.cells.append(code_cell)
+
 
 if __name__ == "__main__":
     selected_table_df, selected_table, engine2 = setup_and_extract_data()
@@ -82,3 +104,8 @@ if __name__ == "__main__":
 
     # Upload the cleaned data to the database
     dc.upload_to_db(cleaned_table_df, 'dim_users', engine2)
+
+    # Retrieve data from PDF
+    card_details_df = dex.retrieve_pdf_data()
+   
+   

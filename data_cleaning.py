@@ -57,7 +57,7 @@ class DataCleaning:
         return legacy_users_df_filtered
  
     @staticmethod
-    def clean_card_data (card_details_df):
+    def clean_card_data(card_details_df):
         # Show the rows where "card_number" isnull
         nulls_in_card_number = card_details_df["card_number"].isnull()
         card_details_df_filtered = card_details_df[~nulls_in_card_number]
@@ -74,13 +74,14 @@ class DataCleaning:
 
         # Convert 'date_payment_confirmed' to datetime format
         card_details_df_filtered['date_payment_confirmed'] = card_details_df_filtered['date_payment_confirmed'].apply(parse)
+        print("after parse\n")
         card_details_df_filtered['date_payment_confirmed'] = pd.to_datetime(card_details_df_filtered['date_payment_confirmed'], format='%y-%m-%d', errors='coerce')
-
+        print("after formating of month and year\n")
         card_details_df_filtered['card_provider'] = card_details_df_filtered['card_provider'].astype('category')
 
         return card_details_df_filtered
 
-    
+        # below is most of the code ran to clean the data. Even when running this below code i still found the NaN or something error.
 
         # print("Show the rows where \"card_number\" isnull:\n")
         # nulls_in_card_number = card_details_df["card_number"].isnull()

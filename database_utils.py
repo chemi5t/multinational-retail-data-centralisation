@@ -12,8 +12,8 @@ class DatabaseConnector:
     
     @staticmethod
     def init_db_engine(credentials):
-        engine = create_engine(f"{credentials['DATABASE_TYPE']}+{credentials['RDS_DBAPI']}://{credentials['RDS_USER']}:{credentials['RDS_PASSWORD']}@{credentials['RDS_HOST']}:{credentials['RDS_PORT']}/{credentials['RDS_DATABASE']}")
-        engine2 = create_engine(f"{credentials['RDS_DATABASE_TYPE']}+{credentials['DBAPI']}://{credentials['USER']}:{credentials['PASSWORD']}@{credentials['HOST']}:{credentials['PORT']}/{credentials['DATABASE']}")
+        engine = create_engine(f"{credentials['RDS_DATABASE_TYPE']}+{credentials['RDS_DBAPI']}://{credentials['RDS_USER']}:{credentials['RDS_PASSWORD']}@{credentials['RDS_HOST']}:{credentials['RDS_PORT']}/{credentials['RDS_DATABASE']}")
+        engine2 = create_engine(f"{credentials['DATABASE_TYPE']}+{credentials['DBAPI']}://{credentials['USER']}:{credentials['PASSWORD']}@{credentials['HOST']}:{credentials['PORT']}/{credentials['DATABASE']}")
 
         return engine, engine2
     

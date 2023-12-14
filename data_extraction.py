@@ -48,4 +48,4 @@ class DataExtractor:
             nbformat.write(notebook, nb_file)
             print(f"Saved {table_name} DataFrame as {notebook_file}\n")
         
-        return card_details_df
+        return card_details_df, table_name, csv_filename

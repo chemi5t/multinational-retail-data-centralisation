@@ -94,6 +94,7 @@ if __name__ == "__main__":
 
     # Clean the selected table DataFrame
     cleaned_table_df = dcl.clean_user_data(selected_table_df)
+
     print(f"\nCleaned {selected_table} DataFrame: \n")
     print(cleaned_table_df, "\n")
 
@@ -105,7 +106,18 @@ if __name__ == "__main__":
     # Upload the cleaned data to the database
     dc.upload_to_db(cleaned_table_df, 'dim_users', engine2)
 
-    # Retrieve data from PDF
-    card_details_df = dex.retrieve_pdf_data()
+    # Retrieve PDF from AWS S3 bucket and convert to CSV
+    card_details_df, table_name, csv_filename = dex.retrieve_pdf_data()
    
-   
+    cleaned_card_details_df = dcl.clean_card_data(card_details_df)
+
+    print(f"\nCleaned {table_name} DataFrame: \n")
+    print(cleaned_card_details_df, "\n")
+
+    # Save the cleaned DataFrame as a CSV file
+    cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
+    cleaned_card_details_df.to_csv(cleaned_csv_filename, index=False)
+    print(f"Saved cleaned {table_name} DataFrame as {cleaned_csv_filename}.")
+
+    # Upload the cleaned data to the database
+    dc.upload_to_db(cleaned_card_details_df, 'dim_card_details', engine2)

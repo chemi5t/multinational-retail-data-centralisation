@@ -59,28 +59,20 @@ class DataCleaning:
  
     @staticmethod
     def clean_card_data(card_details_df):
-
-        # Show the rows where "card_number" isnull
-        nulls_in_card_number = card_details_df["card_number"].isnull()
-        card_details_df_filtered = card_details_df[~nulls_in_card_number]
-
-        # Remove '?' from 'card_number' column
-        card_details_df_filtered['card_number'] = card_details_df_filtered['card_number'].str.replace('?', '')
-
-        # Check for entries that match a numeric pattern
-        # card_details_df_filtered = card_details_df_filtered[card_details_df_filtered['card_number'].str.isnumeric()]
-        numeric_mask = card_details_df_filtered['card_number'].notnull() & card_details_df_filtered['card_number'].str.isnumeric()
-        card_details_df_filtered = card_details_df_filtered[numeric_mask]
-        card_details_df_filtered['card_number'] = card_details_df_filtered['card_number'].astype('string')
+         
+        # Remove rows where "card_number" is null
+        card_details_df_filtered = card_details_df.dropna(subset=['card_number'])
 
         # Convert 'expiry_date' to datetime format
         card_details_df_filtered['expiry_date'] = pd.to_datetime(card_details_df_filtered['expiry_date'], format='%m/%y', errors='coerce')
 
+        # Remove rows where "expiry_date" is null
+        card_details_df_filtered = card_details_df_filtered.dropna(subset=['expiry_date'])
+
         # Convert 'date_payment_confirmed' to datetime format
         card_details_df_filtered['date_payment_confirmed'] = card_details_df_filtered['date_payment_confirmed'].apply(parse)
-        print("after parse\n")
         card_details_df_filtered['date_payment_confirmed'] = pd.to_datetime(card_details_df_filtered['date_payment_confirmed'], format='%y-%m-%d', errors='coerce')
-        print("after formating of month and year\n")
+
         card_details_df_filtered['card_provider'] = card_details_df_filtered['card_provider'].astype('category')
 
         return card_details_df_filtered

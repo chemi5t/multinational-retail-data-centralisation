@@ -90,6 +90,10 @@ def save_dataframe(card_details_df): # Step 1: Specify the correct file path
 
 
 if __name__ == "__main__":
+
+    # cleaner = dcl()
+    # cleaner.
+
     selected_table_df, selected_table, engine2 = setup_and_extract_data()
 
     # Clean the selected table DataFrame

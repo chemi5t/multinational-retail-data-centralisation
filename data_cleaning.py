@@ -61,10 +61,13 @@ class DataCleaning:
     def clean_card_data(card_details_df):
          
         # Remove rows where "card_number" is null
-        card_details_df_filtered = card_details_df.dropna(subset=['card_number'])
+        card_details_df_filtered = card_details_df.dropna(how='all')
 
         # Convert 'expiry_date' to datetime format
         card_details_df_filtered['expiry_date'] = pd.to_datetime(card_details_df_filtered['expiry_date'], format='%m/%y', errors='coerce')
+
+        # Format 'expiry_date' for display (month/year)
+        card_details_df_filtered['expiry_date'] = card_details_df_filtered['expiry_date'].dt.strftime('%m/%y')
 
         # Remove rows where "expiry_date" is null
         card_details_df_filtered = card_details_df_filtered.dropna(subset=['expiry_date'])
@@ -73,6 +76,11 @@ class DataCleaning:
         card_details_df_filtered['date_payment_confirmed'] = card_details_df_filtered['date_payment_confirmed'].apply(parse)
         card_details_df_filtered['date_payment_confirmed'] = pd.to_datetime(card_details_df_filtered['date_payment_confirmed'], format='%y-%m-%d', errors='coerce')
 
+        # Convert 'card_provider' to datatype 'category'
         card_details_df_filtered['card_provider'] = card_details_df_filtered['card_provider'].astype('category')
+
+        # Remove '?' from 'card_number' column
+        card_details_df_filtered['card_number'] = card_details_df_filtered['card_number'].astype('str').apply(lambda x: x.replace("?", ''))
+        card_details_df_filtered['card_number'] = card_details_df_filtered['card_number'].astype('string')
 
         return card_details_df_filtered

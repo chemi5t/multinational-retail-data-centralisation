@@ -74,4 +74,40 @@ class DataExtractor:
         except requests.RequestException as e:
             print(f"An error occurred: {e}")
             return None
-        
+    
+    @staticmethod
+    def retrieve_stores_data(retrieve_a_store_endpoint, headers, number_of_stores):
+        if number_of_stores is None:
+            print("Failed to retrieve the number of stores.")
+            return None
+
+        try:
+            # Initialize an empty list to store data
+            all_stores_data = []
+
+            # Iterate through store numbers and retrieve data for each store
+            for store_number in range(0, number_of_stores):
+                # Format the endpoint with the specified store number
+                endpoint = retrieve_a_store_endpoint.format(store_number=store_number)
+
+                # Send GET request to the API
+                response = requests.get(endpoint, headers=headers)
+
+                # Check if the request was successful (status code 200)
+                if response.status_code == 200:
+                    # Extract store data from the response JSON
+                    store_data = response.json()
+                    all_stores_data.append(store_data)
+                else:
+                    # If the request was not successful, print the status code and response text
+                    print(f"Request for store {store_number} failed with status code: {response.status_code}")
+                    print(f"Response Text: {response.text}")
+
+            # Convert the list of store data into a Pandas DataFrame
+            stores_df = pd.DataFrame(all_stores_data)
+
+            return stores_df
+
+        except requests.RequestException as e:
+            print(f"An error occurred: {e}")
+            return None

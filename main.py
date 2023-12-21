@@ -128,16 +128,27 @@ if __name__ == "__main__":
 
 
 
+
 if __name__ == "__main__":
-    
     api_key = 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'
-    header = {'x-api-key': api_key}
+    header_dict = {'x-api-key': api_key}
+
     number_of_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
+    retrieve_a_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
 
     data_extractor = dex()
-    result = data_extractor.list_number_of_stores(number_of_stores_endpoint, header)
 
-    if result is not None:
-        print(f"Number of stores: {result}")
+    # retrieve the number of stores
+    number_of_stores = data_extractor.list_number_of_stores(number_of_stores_endpoint, header_dict)
+    print(f"Number of stores: {number_of_stores}")
+
+    # retrieve data for all stores and save in a Pandas df
+    stores_data = data_extractor.retrieve_stores_data(retrieve_a_store_endpoint, header_dict, number_of_stores)
+
+    if stores_data is not None:
+        print("Stores data:")
+        print(stores_data)
     else:
-        print("Failed to retrieve the number of stores.")
+        print("Failed to retrieve stores data.")
+
+

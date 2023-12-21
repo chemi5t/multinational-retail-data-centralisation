@@ -125,3 +125,19 @@ if __name__ == "__main__":
 
     # Upload the cleaned data to the database
     dc.upload_to_db(cleaned_card_details_df, 'dim_card_details', engine2)
+
+
+
+if __name__ == "__main__":
+    
+    api_key = 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'
+    header = {'x-api-key': api_key}
+    number_of_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
+
+    data_extractor = dex()
+    result = data_extractor.list_number_of_stores(number_of_stores_endpoint, header)
+
+    if result is not None:
+        print(f"Number of stores: {result}")
+    else:
+        print("Failed to retrieve the number of stores.")

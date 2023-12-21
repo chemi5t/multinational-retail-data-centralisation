@@ -4,6 +4,9 @@ import pandas as pd
 import tabula # read tables in a PDF
 import nbformat # save as .ipynb
 
+import requests
+import json
+
 class DataExtractor:
 
     @staticmethod
@@ -49,3 +52,26 @@ class DataExtractor:
             print(f"Saved {table_name} DataFrame as {notebook_file}\n")
         
         return card_details_df, table_name, csv_filename
+    
+    @staticmethod
+    def list_number_of_stores(number_of_stores_endpoint, headers):
+        
+        try:
+            # Send GET request to the API
+            response = requests.get(number_of_stores_endpoint, headers=headers)
+
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                # Extract and return the number of stores from the response JSON
+                data = response.json()
+                return data['number_stores']
+            else:
+                # If the request was not successful, print the status code and response text
+                print(f"Request failed with status code: {response.status_code}")
+                print(f"Response Text: {response.text}")
+                return None
+
+        except requests.RequestException as e:
+            print(f"An error occurred: {e}")
+            return None
+        

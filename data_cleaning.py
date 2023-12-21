@@ -8,6 +8,7 @@ import missingno as msno
 import re
 from dateutil.parser import parse # to help with datatime edits
 from IPython.display import display
+import requests
 
 
 class DataCleaning:

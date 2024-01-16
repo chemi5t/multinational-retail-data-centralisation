@@ -102,13 +102,13 @@ if __name__ == "__main__":
     # Clean the selected table DataFrame
     cleaned_table_df = dcl.clean_user_data(selected_table_df)
 
-    print(f"\nCleaned {selected_table} DataFrame: \n")
+    print(f"\nCleaned '{selected_table}' DataFrame: \n")
     print(cleaned_table_df, "\n")
 
     # Save the cleaned DataFrame as a CSV file
     cleaned_csv_filename = f"{selected_table}_data_cleaned.csv"
     cleaned_table_df.to_csv(cleaned_csv_filename, index=False)
-    print(f"Saved cleaned {selected_table} DataFrame as {cleaned_csv_filename}.")
+    print(f"Saved cleaned '{selected_table}' DataFrame as '{cleaned_csv_filename}'.")
 
     # Upload the cleaned data to the database
     dc.upload_to_db(cleaned_table_df, 'dim_users', engine2)
@@ -118,18 +118,16 @@ if __name__ == "__main__":
    
     cleaned_card_details_df = dcl.clean_card_data(card_details_df)
 
-    print(f"\nCleaned {table_name} DataFrame: \n")
+    print(f"\nCleaned '{table_name}' DataFrame: \n")
     print(cleaned_card_details_df, "\n")
 
     # Save the cleaned DataFrame as a CSV file
     cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
     cleaned_card_details_df.to_csv(cleaned_csv_filename, index=False)
-    print(f"Saved cleaned {table_name} DataFrame as {cleaned_csv_filename}.")
+    print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.")
 
     # Upload the cleaned data to the database
     dc.upload_to_db(cleaned_card_details_df, 'dim_card_details', engine2)
-
-
 
     # API section
 
@@ -137,8 +135,6 @@ if __name__ == "__main__":
     cred_access = config('credentials_env') # refers to .yaml file
     api_connector = dc()
     cred_api = api_connector.read_db_creds(file_path = cred_access) # extracts the .yaml file
-    
-
 
     x_api_key = cred_api['api_key'] # access the .yaml key
     headers = {'x-api-key': x_api_key}
@@ -150,7 +146,7 @@ if __name__ == "__main__":
 
     # retrieve the number of stores
     number_of_stores = api_extractor.list_number_of_stores(number_of_stores_endpoint, headers)
-    print(f"Number of stores: {number_of_stores}")
+    print(f"\nRetrieving the number of stores: {number_of_stores}")
 
     # retrieve data for all stores and save in a Pandas df
     stores_df = api_extractor.retrieve_stores_data(retrieve_a_store_endpoint, headers, number_of_stores)

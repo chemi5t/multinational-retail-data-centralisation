@@ -49,7 +49,7 @@ class DataExtractor:
         notebook_file = f"{table_name}.ipynb"
         with open(notebook_file, 'w') as nb_file:
             nbformat.write(notebook, nb_file)
-            print(f"Saved '{table_name}' DataFrame as '{notebook_file}'.\n")
+            print(f"Saved '{table_name}' as '{notebook_file}'.\n")
         
         return card_details_df, table_name, csv_filename
     
@@ -131,7 +131,7 @@ class DataExtractor:
             notebook_file = f"{table_name}.ipynb"
             with open(notebook_file, 'w') as nb_file:
                 nbformat.write(notebook, nb_file)
-                print(f"Saved '{table_name}' DataFrame as '{notebook_file}'.\n")
+                print(f"Saved '{table_name}' as '{notebook_file}'.\n")
             
             return stores_df, table_name, csv_filename
 

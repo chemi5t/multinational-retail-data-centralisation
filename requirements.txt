@@ -9,4 +9,5 @@ plotly.express # Visualising
 pip install scikit-learn # for uploading df to your postgres
 pip install tabula-py # read tables in a PDF
 pip install jpype1 # needed for my s3 extraction tabula
+python-decouple # to use with sensitive information i.e. passwords
 

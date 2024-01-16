@@ -8,6 +8,9 @@ import pandas as pd
 # import numpy as np
 import nbformat # save as .ipynb
 
+from decouple import config #  calling sensitive information
+import yaml # to read .yaml. Help with read_db
+
 
 def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the correct file path
     database_connector = dc()
@@ -128,26 +131,33 @@ if __name__ == "__main__":
 
 
 
+    # API section
 
-if __name__ == "__main__":
-    api_key = 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'
-    header_dict = {'x-api-key': api_key}
+    # to gain access to private credentials for API
+    cred_access = config('credentials_env') # refers to .yaml file
+    api_connector = dc()
+    cred_api = api_connector.read_db_creds(file_path = cred_access) # extracts the .yaml file
+    
 
-    number_of_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
-    retrieve_a_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
 
-    data_extractor = dex()
+    x_api_key = cred_api['api_key'] # access the .yaml key
+    headers = {'x-api-key': x_api_key}
+
+    number_of_stores_endpoint = cred_api['number_of_stores_endpoint']
+    retrieve_a_store_endpoint = cred_api['retrieve_a_store_endpoint']
+
+    api_extractor = dex()
 
     # retrieve the number of stores
-    number_of_stores = data_extractor.list_number_of_stores(number_of_stores_endpoint, header_dict)
+    number_of_stores = api_extractor.list_number_of_stores(number_of_stores_endpoint, headers)
     print(f"Number of stores: {number_of_stores}")
 
     # retrieve data for all stores and save in a Pandas df
-    stores_data = data_extractor.retrieve_stores_data(retrieve_a_store_endpoint, header_dict, number_of_stores)
+    stores_df = api_extractor.retrieve_stores_data(retrieve_a_store_endpoint, headers, number_of_stores)
 
-    if stores_data is not None:
+    if stores_df is not None:
         print("Stores data:")
-        print(stores_data)
+        print(stores_df)
     else:
         print("Failed to retrieve stores data.")
 

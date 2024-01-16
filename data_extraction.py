@@ -30,7 +30,7 @@ class DataExtractor:
         table_name = "card_details"
         csv_filename = f"{table_name}.csv"
         card_details_df.to_csv(csv_filename, index=False)
-        print(f"Saved 'card details' as {csv_filename}")
+        print(f"Saved '{table_name}' as '{csv_filename}'.")
 
         # Create a new notebook
         notebook = nbformat.v4.new_notebook()
@@ -49,7 +49,7 @@ class DataExtractor:
         notebook_file = f"{table_name}.ipynb"
         with open(notebook_file, 'w') as nb_file:
             nbformat.write(notebook, nb_file)
-            print(f"Saved {table_name} DataFrame as {notebook_file}\n")
+            print(f"Saved '{table_name}' DataFrame as '{notebook_file}'.\n")
         
         return card_details_df, table_name, csv_filename
     
@@ -106,7 +106,34 @@ class DataExtractor:
             # Convert the list of store data into a Pandas DataFrame
             stores_df = pd.DataFrame(all_stores_data)
 
-            return stores_df
+            #############
+
+            # Save the DataFrame as a CSV file
+            table_name = "store_details"
+            csv_filename = f"{table_name}.csv"
+            stores_df.to_csv(csv_filename, index=False)
+            print(f"Saved '{table_name}' as '{csv_filename}'.")
+
+            # Create a new notebook
+            notebook = nbformat.v4.new_notebook()
+            # Add a code cell for the table to the notebook
+            code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
+                                                f"# Import data from '{csv_filename}' into DataFrame.\n"
+                                                f"table_name = '{table_name}'\n"
+                                                f"csv_file_path = '{table_name}.csv'\n"
+                                                f"{table_name}_df = pd.read_csv(csv_file_path)\n"
+                                                f"# Display the DataFrame\n"
+                                                f"display({table_name}_df)")
+
+            notebook.cells.append(code_cell)
+
+            # Save the notebook to a .ipynb file with a name based on the fixed extracted table
+            notebook_file = f"{table_name}.ipynb"
+            with open(notebook_file, 'w') as nb_file:
+                nbformat.write(notebook, nb_file)
+                print(f"Saved '{table_name}' DataFrame as '{notebook_file}'.\n")
+            
+            return stores_df, table_name, csv_filename
 
         except requests.RequestException as e:
             print(f"An error occurred: {e}")

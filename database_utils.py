@@ -11,7 +11,7 @@ class DatabaseConnector:
         return credentials
     
     @staticmethod
-    def init_db_engine(credentials):
+    def init_db_engine(credentials: dict):
         engine = create_engine(f"{credentials['RDS_DATABASE_TYPE']}+{credentials['RDS_DBAPI']}://{credentials['RDS_USER']}:{credentials['RDS_PASSWORD']}@{credentials['RDS_HOST']}:{credentials['RDS_PORT']}/{credentials['RDS_DATABASE']}")
         engine2 = create_engine(f"{credentials['DATABASE_TYPE']}+{credentials['DBAPI']}://{credentials['USER']}:{credentials['PASSWORD']}@{credentials['HOST']}:{credentials['PORT']}/{credentials['DATABASE']}")
 
@@ -23,5 +23,5 @@ class DatabaseConnector:
         print(f"Data uploaded to table '{selected_table}'.")
 
 
-
+DatabaseConnector.read_db_creds()
 

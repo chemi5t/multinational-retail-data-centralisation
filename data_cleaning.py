@@ -85,3 +85,7 @@ class DataCleaning:
         card_details_df_filtered['card_number'] = card_details_df_filtered['card_number'].astype('string')
 
         return card_details_df_filtered
+    
+    @staticmethod
+    def called_clean_store_data(card_details_df):
+     

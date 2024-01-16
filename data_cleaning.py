@@ -88,4 +88,5 @@ class DataCleaning:
     
     @staticmethod
     def called_clean_store_data(card_details_df):
+        pass
      

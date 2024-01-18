@@ -32,7 +32,7 @@ class DataCleaning:
         legacy_users_df_filtered['country_code'] = legacy_users_df_filtered['country_code'].replace({'GGB': 'GB'})
         legacy_users_df_filtered['country_code'] = legacy_users_df_filtered['country_code'].astype('category')
 
-        # Assuming 'join_date' is a column in 'date_of_birth'
+        # 'join_date' and 'date_of_birth'
         legacy_users_df_filtered['date_of_birth'] = legacy_users_df_filtered['date_of_birth'].apply(parse)
         legacy_users_df_filtered['join_date'] = legacy_users_df_filtered['join_date'].apply(parse)
 
@@ -87,6 +87,40 @@ class DataCleaning:
         return card_details_df_filtered
     
     @staticmethod
-    def called_clean_store_data(card_details_df):
-        pass
-     
+    def called_clean_store_data(store_details_df):
+        # Filter and include rows where 'lat' values are isnull
+        store_details_df_filtered = store_details_df[store_details_df['lat'].isnull()]
+
+        store_details_df_filtered = store_details_df_filtered.drop('lat', axis=1)
+
+        # Filter and exclude rows where 'longitude' values are notnull
+        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
+
+        # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
+        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
+
+        # Filter out letters from the 'staff_numbers'
+        store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
+        store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
+
+        # Change datatype
+        store_details_df_filtered['store_type'] = store_details_df_filtered['store_type'].astype('category')
+        store_details_df_filtered['store_code'] = store_details_df_filtered['store_code'].astype('string')
+        store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('category')
+
+        # Replace 'eeEurope': 'Europe', 'eeAmerica': 'America'
+        store_details_df_filtered['continent'] = store_details_df_filtered['continent'].replace({'eeEurope': 'Europe', 'eeAmerica': 'America'})
+        store_details_df_filtered['continent'] = store_details_df_filtered['continent'].astype('category')
+
+        # Change datatype to string
+        store_details_df_filtered['address'] = store_details_df_filtered['address'].astype('string')
+        store_details_df_filtered['locality'] = store_details_df_filtered['locality'].astype('string')
+
+        # Convert the 'opening_date' column to datetime format
+        store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
+        # To handle specific formats
+        store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d'))
+        # Convert 'expiry_date' to datetime format
+        store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
+
+        return store_details_df_filtered

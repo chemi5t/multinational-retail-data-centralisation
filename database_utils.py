@@ -20,7 +20,7 @@ class DatabaseConnector:
     @staticmethod
     def upload_to_db(selected_table_df, selected_table, engine2):
         selected_table_df.to_sql(selected_table, engine2, if_exists='replace', index=False)
-        print(f"Data uploaded to table '{selected_table}'.")
+        print(f"Data uploaded to table '{selected_table}'.\n")
 
 
 DatabaseConnector.read_db_creds()

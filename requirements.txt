@@ -10,4 +10,5 @@ pip install scikit-learn # for uploading df to your postgres
 pip install tabula-py # read tables in a PDF
 pip install jpype1 # needed for my s3 extraction tabula
 python-decouple # to use with sensitive information i.e. passwords
+pip install boto3 # boto3 is the official Python SDK (Software Development Kit) provided by AWS for interacting with AWS services, including S3. boto3 has dependencies on the AWS CLI (Command Line Interface) so make sure this is installed as well.
 

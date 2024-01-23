@@ -6,6 +6,7 @@ import nbformat # save as .ipynb
 
 import requests
 import json
+import boto3
 
 class DataExtractor:
 
@@ -24,7 +25,7 @@ class DataExtractor:
     def retrieve_pdf_data(pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"):
         card_details_df = tabula.read_pdf(pdf_path, pages='all')
         card_details_df = pd.concat(card_details_df)
-        print("\nExtracted PDF document from an AWS S3 bucket: ")
+        print("Extracted PDF document from an AWS S3 bucket: ")
 
         # Save the DataFrame as a CSV file
         table_name = "card_details"
@@ -136,5 +137,49 @@ class DataExtractor:
             return stores_df, table_name, csv_filename
 
         except requests.RequestException as e:
+            print(f"An error occurred: {e}")
+            return None
+        
+    @staticmethod
+    def extract_from_s3(s3_address, local_file_path):
+        try:
+            # Create S3 client
+            s3 = boto3.client('s3')
+
+            # Extract bucket name and object key from S3 address
+            bucket_name, object_key = s3_address.replace('s3://', '').split('/', 1)
+
+            # Download the file from S3 to the local machine as a .csv and .ipynb
+            s3.download_file(bucket_name, object_key, local_file_path)
+
+            table_name = object_key.replace('products.csv', 'products_details')
+            csv_filename = f"{table_name}.csv"
+            print(f"Saved '{table_name}' as '{csv_filename}'.")
+
+            # Read the .csv file into a Pandas DataFrame
+            products_df = pd.read_csv(local_file_path, index_col=0)
+
+            # Create a new notebook
+            notebook = nbformat.v4.new_notebook()
+            # Add a code cell for the table to the notebook
+            code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
+                                                f"# Import data from '{csv_filename}' into DataFrame.\n"
+                                                f"table_name = '{table_name}'\n"
+                                                f"csv_file_path = '{table_name}.csv'\n"
+                                                f"{table_name}_df = pd.read_csv(csv_file_path, index_col=0)\n"
+                                                f"# Display the DataFrame\n"
+                                                f"display({table_name}_df)")
+
+            notebook.cells.append(code_cell)
+
+            # Save the notebook to a .ipynb file with a name based on the fixed extracted table
+            notebook_file = f"{table_name}.ipynb"
+            with open(notebook_file, 'w') as nb_file:
+                nbformat.write(notebook, nb_file)
+                print(f"Saved '{table_name}' as '{notebook_file}'.\n")
+
+            return products_df, table_name, csv_filename
+
+        except Exception as e:
             print(f"An error occurred: {e}")
             return None

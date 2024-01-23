@@ -52,7 +52,7 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
                                             f"from database_utils import DatabaseConnector as dc\n\n"
                                             f"database_connector = dc()\n"
                                             f"credentials = database_connector.read_db_creds('{file_path}')\n"
-                                            f"engine = database_connector.init_db_engine(credentials)\n\n"
+                                            f"engine, _ = database_connector.init_db_engine(credentials)\n\n"
                                             f"# Import data from '{selected_table}' table into DataFrame\n"
                                             f"{selected_table}_df = pd.read_sql('{selected_table}', engine)\n\n"
                                             f"# Display the DataFrame\n"
@@ -94,7 +94,7 @@ def save_dataframe(card_details_df): # Step 1: Specify the correct file path
 
 if __name__ == "__main__":
 
-    ######################################## 1. leagacy_users ########################################
+    print("######################################## 1. leagacy_users ########################################")
 
     selected_table_df, selected_table, engine2 = setup_and_extract_data()
 
@@ -116,29 +116,34 @@ if __name__ == "__main__":
 
     api_connector.upload_to_db(cleaned_user_df, 'dim_users', engine2)
 
-    ######################################## 2. card_details ########################################
+    print("######################################## 2. card_details ########################################")
 
     # Retrieve PDF from AWS S3 bucket and convert to CSV
     api_extractor = dex() 
 
     card_details_df, table_name, csv_filename = api_extractor.retrieve_pdf_data()
+    print(f"\n'{table_name}', shall be extracted. \n")
+
+    # Display the DataFrame
+    print(card_details_df, "\n")
+
     cleaned_card_df = data_cleaner.clean_card_data(card_details_df)
 
-    print(f"\nCleaned '{table_name}' DataFrame: \n")
+    print(f"Cleaned '{table_name}' DataFrame: \n")
     print(cleaned_card_df, "\n")
 
     # Save the cleaned DataFrame as a CSV file
     cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
     cleaned_card_df.to_csv(cleaned_csv_filename, index=False)
-    print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.")
+    print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.\n")
 
     # Upload the cleaned data to the database
     api_connector.upload_to_db(cleaned_card_df, 'dim_card_details', engine2)
 
-    ######################################## 3. store_details ########################################
+    print("######################################## 3. store_details ########################################")
 
     # to gain access to private credentials for API
-    cred_access = config('credentials_env') # refers to .yaml file
+    cred_access = config('credentials_env') # refers to .yaml file ## from decouple import config
     cred_api = api_connector.read_db_creds(file_path = cred_access) # extracts the .yaml file
 
     x_api_key = cred_api['api_key'] # access the .yaml key
@@ -149,20 +154,20 @@ if __name__ == "__main__":
 
     # retrieve the number of stores
     number_of_stores = api_extractor.list_number_of_stores(number_of_stores_endpoint, headers)
-    print(f"\nThe number of stores to retrieve data from: {number_of_stores}")
+    print(f"The number of stores to retrieve data from: {number_of_stores}")
 
     # retrieve data for all stores and save in a Pandas df
     stores_df, table_name, csv_filename = api_extractor.retrieve_stores_data(retrieve_a_store_endpoint, headers, number_of_stores)
 
     if stores_df is not None:
-        print("Stores data:")
-        print(stores_df)
+        print(f"'{table_name}', shall be extracted. \n")
+        print(stores_df, "\n")
     else:
         print("Failed to retrieve stores data.")
 
     cleaned_store_df = data_cleaner.called_clean_store_data(stores_df)
 
-    print(f"\nCleaned '{table_name}' DataFrame: \n")
+    print(f"Cleaned '{table_name}' DataFrame: \n")
     print(cleaned_store_df, "\n")
 
     # Save the cleaned DataFrame as a CSV file
@@ -173,8 +178,15 @@ if __name__ == "__main__":
     # Upload the cleaned data to the database
     api_connector.upload_to_db(cleaned_store_df, 'dim_store_details', engine2)
 
-    ######################################## 4. x_details_data ########################################
+    print("######################################## 4. product_details ########################################")
 
+    s3_address = cred_api['s3_address'] # access the .yaml key
+    local_file_path = cred_api['local_file_path'] # specifies the desired local path to save the file
+    products_df, table_name, csv_filename = api_extractor.extract_from_s3(s3_address, local_file_path)
 
-
+    if products_df is not None:
+        print(f"'{table_name}', shall be extracted. \n")
+        print(products_df, "\n")
+    else:
+        print("Failed to retrieve products data.")
 

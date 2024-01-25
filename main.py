@@ -196,13 +196,13 @@ if __name__ == "__main__":
 
     print(f"Cleaned '{table_name}' DataFrame: \n")
     print(cleaned_products_data, "\n")
-
+    
     # Save the cleaned DataFrame as a CSV file
     cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
-    cleaned_products_data.to_csv(cleaned_csv_filename, index=False)
+    cleaned_products_data.to_csv(cleaned_csv_filename)
     print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.")
 
     # Upload the cleaned data to the database
     api_connector.upload_to_db(cleaned_products_data, 'dim_products', engine2)
 
-    print("######################################## 5. product_details ########################################")
+    print("######################################## 5. orders_details ########################################")

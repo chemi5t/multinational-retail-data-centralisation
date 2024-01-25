@@ -174,7 +174,7 @@ class DataCleaning:
                         # If units are not recognised, return NaN
                         return np.nan
 
-                return result
+                return round(result, 3)
 
             except Exception as e:
                 # If any error occurs, return NaN

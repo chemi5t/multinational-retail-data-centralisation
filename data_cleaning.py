@@ -124,3 +124,82 @@ class DataCleaning:
         store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
 
         return store_details_df_filtered
+    
+    @staticmethod
+    def convert_product_weights(products_df_filtered):
+        def convert_weight(value):
+            try:
+                # Check if the value contains 'x' indicating a multiplication
+                if 'x' in value:
+                    # Extract numeric parts and units from both sides of 'x'
+                    numeric_part1, units1, numeric_part2, units2 = re.match(r"([\d.]+)\s*([a-zA-Z]*)\s*x\s*([\d.]+)\s*([a-zA-Z]*)", value).groups()
+
+                    # If units1 is empty, use units2
+                    if not units1:
+                        units1 = units2
+
+                    # Multiply numeric parts together
+                    result = float(numeric_part1) * float(numeric_part2)
+
+                    # Handle units conversion for both parts
+                    if units1.lower() in ['g', 'gram', 'grams']:
+                        result /= 1000
+                    elif units1.lower() in ['ml', 'milliliter', 'milliliters']:
+                        result /= 1000
+                    elif units1.lower() in ['kg', 'kilogram', 'kilograms']:
+                        pass  # No conversion needed for kg
+                    elif units1.lower() in ['oz', 'ounce', 'ounces']:
+                        result *= 0.0283495
+                    else:
+                        # If units are not recognized, return NaN
+                        return np.nan
+
+                else:
+                    # Extract numeric part and units from the value
+                    numeric_part, units = re.match(r"([\d.]+)\s*([a-zA-Z]*)", value).groups()
+
+                    # Multiply numeric part by the units
+                    result = float(numeric_part)
+
+                    # Handle units conversion
+                    if units.lower() in ['g', 'gram', 'grams']:
+                        result /= 1000
+                    elif units.lower() in ['ml', 'milliliter', 'milliliters']:
+                        result /= 1000
+                    elif units.lower() in ['kg', 'kilogram', 'kilograms']:
+                        pass  # No conversion needed for kg
+                    elif units.lower() in ['oz', 'ounce', 'ounces']:
+                        result *= 0.0283495
+                    else:
+                        # If units are not recognised, return NaN
+                        return np.nan
+
+                return result
+
+            except Exception as e:
+                # If any error occurs, return NaN
+                return np.nan
+
+        # Apply the conversion function to the 'weight' column
+        products_df_filtered['weight'] = products_df_filtered['weight'].apply(convert_weight)
+        cleaned_products_data = products_df_filtered.rename(columns={'weight': 'weight (kg)'})
+
+        return cleaned_products_data
+
+    @staticmethod
+    def clean_products_data(products_df):
+        # Show rows where 'product_price' values are notnull
+        products_df_filtered = products_df[products_df['product_price'].notnull()]
+
+        # regular expression to filter out rows where 'category' contains numbers
+        products_df_filtered = products_df_filtered[~products_df_filtered['category'].str.contains('\d')]
+        products_df_filtered['category'] = products_df_filtered['category'].astype('category')
+
+        # Convert the 'date_added' column to datetime format
+        products_df_filtered['date_added'] = products_df_filtered['date_added'].apply(parse)
+        products_df_filtered['date_added'] = products_df_filtered['date_added'].combine_first(pd.to_datetime(products_df_filtered['date_added'], errors='coerce', format='%Y %B %d'))
+        
+        # Convert 'removed' to datatype 'category'
+        products_df_filtered['removed'] = products_df_filtered['removed'].astype('category')
+        
+        return products_df_filtered

@@ -190,3 +190,19 @@ if __name__ == "__main__":
     else:
         print("Failed to retrieve products data.")
 
+    products_df_filtered = data_cleaner.clean_products_data(products_df)
+
+    cleaned_products_data = data_cleaner.convert_product_weights(products_df_filtered)
+
+    print(f"Cleaned '{table_name}' DataFrame: \n")
+    print(cleaned_products_data, "\n")
+
+    # Save the cleaned DataFrame as a CSV file
+    cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
+    cleaned_products_data.to_csv(cleaned_csv_filename, index=False)
+    print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.")
+
+    # Upload the cleaned data to the database
+    api_connector.upload_to_db(cleaned_products_data, 'dim_products', engine2)
+
+    print("######################################## 5. product_details ########################################")

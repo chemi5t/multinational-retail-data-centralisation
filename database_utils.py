@@ -23,5 +23,4 @@ class DatabaseConnector:
         print(f"Data uploaded to table '{selected_table}'.\n")
 
 
-DatabaseConnector.read_db_creds()
 

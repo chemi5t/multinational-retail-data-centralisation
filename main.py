@@ -12,7 +12,7 @@ from decouple import config #  calling sensitive information
 import yaml # to read .yaml. Help with read_db
 
 
-def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the correct file path
+def setup_and_extract_data(file_path='db_creds.yaml', table_index = 2): # Step 1: Specify the correct file path
     database_connector = dc()
     credentials = database_connector.read_db_creds(file_path)    # Step 2: Read credentials
     engine, engine2 = database_connector.init_db_engine(credentials)      # Step 3: Initialise database engine
@@ -22,14 +22,14 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
     tables = data_extractor.list_db_tables(engine)
     
     # Display the list of tables to the user
-    # Available Tables: ['legacy_store_details', 'legacy_users', 'orders_table']  
+    # Available Tables: ['legacy_store_details', 'legacy_users', 'orders_table']  i.e. table 1, 2, 3 respectively (indices 0, 1, 2 respectively)
     print("\nAvailable Tables: \n")
     for i, table_name in enumerate(tables, 1):
         print(f"{i}. {table_name}")
 
     # Get user input for table selection
    
-    table_index = 2
+    table_index
     selected_index = table_index - 1
     selected_table = tables[selected_index]
     print(f"\nTable 2. '{selected_table}', shall be extracted. \n")
@@ -41,8 +41,8 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
     print(selected_table_df, "\n")
 
     # Save the DataFrame as a CSV file
-    csv_filename = f"{selected_table}_data.csv"
-    selected_table_df.to_csv(csv_filename, index=False)
+    csv_filename = f"{selected_table}.csv"
+    selected_table_df.to_csv(csv_filename, index=True)
     print(f"Saved {selected_table} DataFrame as {csv_filename}")
 
     # Create a new notebook
@@ -61,7 +61,7 @@ def setup_and_extract_data(file_path='db_creds.yaml'): # Step 1: Specify the cor
     notebook.cells.append(code_cell)
 
     # Save the notebook to a .ipynb file with a name based on the selected table
-    notebook_file = f"{selected_table}_data.ipynb"
+    notebook_file = f"{selected_table}.ipynb"
     with open(notebook_file, 'w') as nb_file:
         nbformat.write(notebook, nb_file)
         print(f"Saved {selected_table} DataFrame as {selected_table}_data.ipynb\n")
@@ -73,7 +73,7 @@ def save_dataframe(card_details_df): # Step 1: Specify the correct file path
 
     # Save the DataFrame as a CSV file
     csv_filename = f"{selected_table}_data.csv"
-    selected_table_df.to_csv(csv_filename, index=False)
+    selected_table_df.to_csv(csv_filename)
     print(f"Saved {selected_table} DataFrame as {csv_filename}")
 
     # Create a new notebook
@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     print("######################################## 1. leagacy_users ########################################")
 
-    selected_table_df, selected_table, engine2 = setup_and_extract_data()
+    selected_table_df, selected_table, engine2 = setup_and_extract_data(table_index = 2)
 
     # Clean the selected table DataFrame
     data_cleaner = dcl() # cleaning the leagacy user data 
@@ -199,10 +199,29 @@ if __name__ == "__main__":
     
     # Save the cleaned DataFrame as a CSV file
     cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
-    cleaned_products_data.to_csv(cleaned_csv_filename)
+    cleaned_products_data.to_csv(cleaned_csv_filename, index=True)
     print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.")
 
     # Upload the cleaned data to the database
     api_connector.upload_to_db(cleaned_products_data, 'dim_products', engine2)
 
     print("######################################## 5. orders_details ########################################")
+
+    selected_table_df, selected_table, engine2 = setup_and_extract_data(table_index = 3)
+
+    # Clean the selected table DataFrame
+    data_cleaner = dcl() # cleaning the orders_details
+
+    cleaned_user_df = data_cleaner.clean_orders_data(selected_table_df)
+
+    print(f"\nCleaned '{selected_table}' DataFrame: \n")
+    print(cleaned_user_df, "\n")
+
+    # Save the cleaned DataFrame as a CSV file
+    cleaned_csv_filename = f"{selected_table}_data_cleaned.csv"
+    cleaned_user_df.to_csv(cleaned_csv_filename, index=True)
+    print(f"Saved cleaned '{selected_table}' DataFrame as '{cleaned_csv_filename}'.")
+
+    # Upload the cleaned data to the database
+    api_connector = dc()
+    api_connector.upload_to_db(cleaned_user_df, 'orders_table', engine2)

@@ -203,3 +203,12 @@ class DataCleaning:
         products_df_filtered['removed'] = products_df_filtered['removed'].astype('category')
         
         return products_df_filtered
+    
+    @staticmethod
+    def clean_orders_data(selected_table_df):
+
+        # Drop specified columns from the copy
+        columns_to_drop = ['first_name', 'last_name', '1']
+        orders_df_filtered = selected_table_df.drop(columns=columns_to_drop)
+        
+        return orders_df_filtered

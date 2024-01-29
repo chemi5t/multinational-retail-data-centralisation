@@ -212,3 +212,7 @@ class DataCleaning:
         orders_df_filtered = selected_table_df.drop(columns=columns_to_drop)
         
         return orders_df_filtered
+        
+    @staticmethod
+    def clean_date_data(products_df):
+        pass

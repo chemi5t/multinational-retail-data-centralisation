@@ -32,7 +32,7 @@ def setup_and_extract_data(file_path='db_creds.yaml', table_index = 2): # Step 1
     table_index
     selected_index = table_index - 1
     selected_table = tables[selected_index]
-    print(f"\nTable 2. '{selected_table}', shall be extracted. \n")
+    print(f"\nTable {table_index}. '{selected_table}', shall be extracted. \n")
 
     # Step 5: Read the selected table into a pandas DataFrame
     selected_table_df = data_extractor.read_rds_table(selected_table, engine)
@@ -69,7 +69,7 @@ def setup_and_extract_data(file_path='db_creds.yaml', table_index = 2): # Step 1
     
     return selected_table_df, selected_table, engine2
 
-def save_dataframe(card_details_df): # Step 1: Specify the correct file path
+def save_dataframe(date_details_df): # Step 1: Specify the correct file path
 
     # Save the DataFrame as a CSV file
     csv_filename = f"{selected_table}_data.csv"
@@ -121,24 +121,24 @@ if __name__ == "__main__":
     # Retrieve PDF from AWS S3 bucket and convert to CSV
     api_extractor = dex() 
 
-    card_details_df, table_name, csv_filename = api_extractor.retrieve_pdf_data()
+    date_details_df, table_name, csv_filename = api_extractor.retrieve_pdf_data()
     print(f"\n'{table_name}', shall be extracted. \n")
 
     # Display the DataFrame
-    print(card_details_df, "\n")
+    print(date_details_df, "\n")
 
-    cleaned_card_df = data_cleaner.clean_card_data(card_details_df)
+    cleaned_date_df = data_cleaner.clean_card_data(date_details_df)
 
     print(f"Cleaned '{table_name}' DataFrame: \n")
-    print(cleaned_card_df, "\n")
+    print(cleaned_date_df, "\n")
 
     # Save the cleaned DataFrame as a CSV file
     cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
-    cleaned_card_df.to_csv(cleaned_csv_filename, index=False)
+    cleaned_date_df.to_csv(cleaned_csv_filename, index=False)
     print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.\n")
 
     # Upload the cleaned data to the database
-    api_connector.upload_to_db(cleaned_card_df, 'dim_card_details', engine2)
+    api_connector.upload_to_db(cleaned_date_df, 'dim_card_details', engine2)
 
     print("######################################## 3. store_details ########################################")
 
@@ -180,15 +180,15 @@ if __name__ == "__main__":
 
     print("######################################## 4. product_details ########################################")
 
-    s3_address = cred_api['s3_address'] # access the .yaml key
-    local_file_path = cred_api['local_file_path'] # specifies the desired local path to save the file
-    products_df, table_name, csv_filename = api_extractor.extract_from_s3(s3_address, local_file_path)
+    s3_address_products = cred_api['s3_address_products'] # access the .yaml key
+    local_file_path_products = cred_api['local_file_path_products'] # specifies the desired local path to save the file
+    products_df, table_name, csv_filename = api_extractor.extract_from_s3(s3_address = s3_address_products, local_file_path = local_file_path_products)
 
-    if products_df is not None:
-        print(f"'{table_name}', shall be extracted. \n")
-        print(products_df, "\n")
-    else:
-        print("Failed to retrieve products data.")
+                    # if products_df is not None:
+                    #     print(f"'{table_name}', shall be extracted. \n")
+                    #     print(products_df, "\n")
+                    # else:
+                    #     print("Failed to retrieve products data.")
 
     products_df_filtered = data_cleaner.clean_products_data(products_df)
 
@@ -225,3 +225,64 @@ if __name__ == "__main__":
     # Upload the cleaned data to the database
     api_connector = dc()
     api_connector.upload_to_db(cleaned_user_df, 'orders_table', engine2)
+
+    print("######################################## 6. date_events ########################################")
+    # Retrieve JSON from AWS S3 bucket and convert to CSV
+    date_details_df, table_name, csv_filename = api_extractor.retrieve_json_data()
+
+    # cleaned_date_df = data_cleaner.clean_date_data(date_details_df)
+
+    # print(f"Cleaned '{table_name}' DataFrame: \n")
+    # print(cleaned_date_df, "\n")
+
+    # # Save the cleaned DataFrame as a CSV file
+    # cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
+    # cleaned_date_df.to_csv(cleaned_csv_filename, index=False)
+    # print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.\n")
+
+    # # Upload the cleaned data to the database
+    # api_connector.upload_to_db(cleaned_date_df, 'dim_date_times', engine2)
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # s3_address_date_events = cred_api['s3_address_date_events'] # access the .yaml key
+    # local_file_path_date_details = cred_api['local_file_path_date_details'] # specifies the desired local path to save the file
+    # products_df, table_name, csv_filename = api_extractor.extract_from_s3(s3_address = s3_address_date_events, local_file_path = local_file_path_date_details)
+
+                    # if products_df is not None:
+                    #     print(f"'{table_name}', shall be extracted. \n")
+                    #     print(products_df, "\n")
+                    # else:
+                    #     print("Failed to retrieve products data.")
+
+    # products_df_filtered = data_cleaner.clean_products_data(products_df)
+
+    # cleaned_products_data = data_cleaner.convert_product_weights(products_df_filtered)
+
+    # print(f"Cleaned '{table_name}' DataFrame: \n")
+    # print(cleaned_products_data, "\n")
+    
+    # # Save the cleaned DataFrame as a CSV file
+    # cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
+    # cleaned_products_data.to_csv(cleaned_csv_filename, index=True)
+    # print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.")
+
+    # # Upload the cleaned data to the database
+    # api_connector.upload_to_db(cleaned_products_data, 'dim_products', engine2)

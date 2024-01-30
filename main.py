@@ -230,18 +230,18 @@ if __name__ == "__main__":
     # Retrieve JSON from AWS S3 bucket and convert to CSV
     date_details_df, table_name, csv_filename = api_extractor.retrieve_json_data()
 
-    # cleaned_date_df = data_cleaner.clean_date_data(date_details_df)
+    date_details_df_filtered = data_cleaner.clean_date_data(date_details_df)
 
-    # print(f"Cleaned '{table_name}' DataFrame: \n")
-    # print(cleaned_date_df, "\n")
+    print(f"Cleaned '{table_name}' DataFrame: \n")
+    print(date_details_df_filtered, "\n")
 
-    # # Save the cleaned DataFrame as a CSV file
-    # cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
-    # cleaned_date_df.to_csv(cleaned_csv_filename, index=False)
-    # print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.\n")
+    # Save the cleaned DataFrame as a CSV file
+    cleaned_csv_filename = f"{table_name}_data_cleaned.csv"
+    date_details_df_filtered.to_csv(cleaned_csv_filename, index=False)
+    print(f"Saved cleaned '{table_name}' DataFrame as '{cleaned_csv_filename}'.\n")
 
-    # # Upload the cleaned data to the database
-    # api_connector.upload_to_db(cleaned_date_df, 'dim_date_times', engine2)
+    # Upload the cleaned data to the database
+    api_connector.upload_to_db(date_details_df_filtered, 'dim_date_times', engine2)
 
 
 

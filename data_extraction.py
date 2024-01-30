@@ -291,7 +291,7 @@ class DataExtractor:
         # Save the DataFrame as a CSV file
         table_name = "date_details"
         csv_filename = f"{table_name}.csv"
-        date_details_df.to_csv(csv_filename, index=False)
+        date_details_df.to_csv(csv_filename, index=True)
         print(f"Saved '{table_name}' as '{csv_filename}'.")
 
         print(f"\n'{table_name}', shall be extracted: \n")

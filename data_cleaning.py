@@ -206,13 +206,19 @@ class DataCleaning:
     
     @staticmethod
     def clean_orders_data(selected_table_df):
-
-        # Drop specified columns from the copy
+        # Drop specified columns
         columns_to_drop = ['first_name', 'last_name', '1']
         orders_df_filtered = selected_table_df.drop(columns=columns_to_drop)
         
         return orders_df_filtered
         
     @staticmethod
-    def clean_date_data(products_df):
-        pass
+    def clean_date_data(date_details_df):
+        # filtering mask created
+        condition_to_include = date_details_df['time_period'].astype(str).str.contains('Evening|Morning|Midday|Late_Hours')
+        date_details_df_filtered = date_details_df[condition_to_include]
+
+        # Convert 'time_period' to datatype 'category'
+        date_details_df_filtered.loc[:, 'time_period'] = date_details_df_filtered['time_period'].astype('category')
+
+        return date_details_df_filtered

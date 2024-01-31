@@ -1,13 +1,14 @@
 from database_utils import DatabaseConnector
 from sqlalchemy import inspect
+from urllib.parse import urlparse
+
 import pandas as pd
 import tabula # read tables in a PDF
 import nbformat # save as .ipynb
-
 import requests
 import json
 import boto3
-from urllib.parse import urlparse
+
 
 
 class DataExtractor:

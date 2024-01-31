@@ -182,7 +182,7 @@ class DataCleaning:
 
         # Apply the conversion function to the 'weight' column
         products_df_filtered['weight'] = products_df_filtered['weight'].apply(convert_weight)
-        cleaned_products_data = products_df_filtered.rename(columns={'weight': 'weight (kg)'})
+        cleaned_products_data = products_df_filtered.rename(columns={'weight': 'weight_(kg)'})
 
         return cleaned_products_data
 
@@ -199,6 +199,9 @@ class DataCleaning:
         products_df_filtered['date_added'] = products_df_filtered['date_added'].apply(parse)
         products_df_filtered['date_added'] = products_df_filtered['date_added'].combine_first(pd.to_datetime(products_df_filtered['date_added'], errors='coerce', format='%Y %B %d'))
         
+        # Correct the spelling in the column 'removed'
+        products_df_filtered['removed'] = products_df_filtered['removed'].replace('Still_avaliable', 'Still_available')
+
         # Convert 'removed' to datatype 'category'
         products_df_filtered['removed'] = products_df_filtered['removed'].astype('category')
         

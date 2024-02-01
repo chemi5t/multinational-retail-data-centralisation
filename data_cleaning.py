@@ -96,9 +96,9 @@ class DataCleaning:
                     # # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
                     # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
 
-       # Filter and exclude rows where 'store_code' values are isnull i.e. we want notnull rows
+        # Filter and exclude rows where 'store_code' values are isnull i.e. we want notnull rows
         store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['store_code'].notnull()]
-
+    
         # Filter out letters from the 'staff_numbers'
         store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
         store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
@@ -119,12 +119,17 @@ class DataCleaning:
         # Convert the 'opening_date' column to datetime format
         store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
         # To handle specific formats
-        store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d'))
+        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d'))
+        store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='mixed'))
         # Convert 'expiry_date' to datetime format
-        store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
+        # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
+        store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
+
+        print(store_details_df_filtered.info())
+        print(store_details_df_filtered)
 
         return store_details_df_filtered
-    
+
     @staticmethod
     def convert_product_weights(products_df_filtered):
         def convert_weight(value):

@@ -93,11 +93,11 @@ class DataCleaning:
 
         store_details_df_filtered = store_details_df_filtered.drop('lat', axis=1)
 
-        # Filter and exclude rows where 'longitude' values are notnull
-        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
+                    # # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
+                    # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
 
-        # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
-        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
+       # Filter and exclude rows where 'store_code' values are isnull i.e. we want notnull rows
+        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['store_code'].notnull()]
 
         # Filter out letters from the 'staff_numbers'
         store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)

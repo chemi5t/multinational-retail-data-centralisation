@@ -21,6 +21,24 @@ ALTER TABLE dim_users
     ALTER COLUMN user_uuid TYPE UUID USING (user_uuid::UUID),
     ALTER COLUMN join_date TYPE DATE USING (join_date::DATE);
 
+SELECT *
+FROM dim_store_details
+WHERE longitude = 'N/A';
+
+UPDATE dim_store_details
+SET address = NULL
+WHERE address = 'N/A';
+
+UPDATE dim_store_details
+SET longitude = NULL
+WHERE longitude = 'N/A';
+
+UPDATE dim_store_details
+SET locality = NULL
+WHERE locality = 'N/A';
+
+
+
 -- Task 3
 ALTER TABLE dim_store_details
     ALTER COLUMN longitude TYPE FLOAT USING (longitude::FLOAT),
@@ -125,9 +143,9 @@ ALTER TABLE orders_table
 ALTER TABLE orders_table
     ADD CONSTRAINT fk_orders_user FOREIGN KEY (user_uuid)  REFERENCES dim_users(user_uuid);
 
--- -- 3: 
--- ALTER TABLE orders_table
---     ADD CONSTRAINT fk_orders_store FOREIGN KEY (store_code) REFERENCES dim_store_details(store_code);
+-- 3: 
+ALTER TABLE orders_table
+    ADD CONSTRAINT fk_orders_store FOREIGN KEY (store_code) REFERENCES dim_store_details(store_code);
 
 -- 4: 
 ALTER TABLE orders_table

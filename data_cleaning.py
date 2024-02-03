@@ -88,45 +88,109 @@ class DataCleaning:
     
     @staticmethod
     def called_clean_store_data(store_details_df):
-        # Filter and include rows where 'lat' values are isnull
-        store_details_df_filtered = store_details_df[store_details_df['lat'].isnull()]
+        # drop na from 'continent' column
+        store_details_df_filtered = store_details_df.dropna(subset=['continent'])
+
+        # Replace 'eeEurope': 'Europe', 'eeAmerica': 'America'
+        store_details_df_filtered.loc[:, 'continent'] = store_details_df_filtered['continent'].replace({'eeEurope': 'Europe', 'eeAmerica': 'America'})
+
+        # Filtering mask created to islocate values containing numbers
+        condition_to_exclude = store_details_df_filtered['continent'].astype(str).str.contains('\d')
+
+        # Mask applied to exclude numbers from the 'continent' column
+        store_details_df_filtered = store_details_df_filtered[~condition_to_exclude]
+
+        store_details_df_filtered['continent'] = store_details_df_filtered['continent'].astype('category')
 
         store_details_df_filtered = store_details_df_filtered.drop('lat', axis=1)
 
-                    # # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
-                    # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
-
-        # Filter and exclude rows where 'store_code' values are isnull i.e. we want notnull rows
-        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['store_code'].notnull()]
-    
-        # Filter out letters from the 'staff_numbers'
-        store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
-        store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
-
-        # Change datatype
+        # Change datatype to category
         store_details_df_filtered['store_type'] = store_details_df_filtered['store_type'].astype('category')
+
+        # Change datatype to string
         store_details_df_filtered['store_code'] = store_details_df_filtered['store_code'].astype('string')
+
+        # Change datatype to category
         store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('category')
 
-        # Replace 'eeEurope': 'Europe', 'eeAmerica': 'America'
-        store_details_df_filtered['continent'] = store_details_df_filtered['continent'].replace({'eeEurope': 'Europe', 'eeAmerica': 'America'})
-        store_details_df_filtered['continent'] = store_details_df_filtered['continent'].astype('category')
+        # Filter out letters from the 'staff_numbers'
+        store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
+
+        # # # Change datatype to int64
+        # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
 
         # Change datatype to string
         store_details_df_filtered['address'] = store_details_df_filtered['address'].astype('string')
+
+        # Change datatype to string
         store_details_df_filtered['locality'] = store_details_df_filtered['locality'].astype('string')
 
-        # Convert the 'opening_date' column to datetime format
-        store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
-        # To handle specific formats
-        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d'))
-        store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='mixed'))
-        # Convert 'expiry_date' to datetime format
-        # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
-        store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
 
-        print(store_details_df_filtered.info())
-        print(store_details_df_filtered)
+
+        store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
+        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
+
+        # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d')
+
+
+        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'].notnull()]
+        
+        print("isnull values:")
+        print(store_details_df_filtered['country_code'].isnull().sum())
+
+        # Convert 'country_code' to string
+        store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('str')
+
+        # Remove rows where 'country_code' is NULL
+        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'] != 'NULL']
+
+
+        display(store_details_df_filtered.info())
+        display(store_details_df_filtered)
+
+
+
+
+        # # Filter and include rows where 'lat' values are isnull
+        # store_details_df_filtered = store_details_df[store_details_df['lat'].isnull()]
+
+        # store_details_df_filtered = store_details_df_filtered.drop('lat', axis=1)
+
+        #             # # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
+        #             # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
+
+        # # Filter and exclude rows where 'store_code' values are isnull i.e. we want notnull rows
+        # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['store_code'].notnull()]
+    
+        # # Filter out letters from the 'staff_numbers'
+        # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
+        # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
+
+        # # Change datatype
+        # store_details_df_filtered['store_type'] = store_details_df_filtered['store_type'].astype('category')
+        # store_details_df_filtered['store_code'] = store_details_df_filtered['store_code'].astype('string')
+        # store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('category')
+
+        # # Replace 'eeEurope': 'Europe', 'eeAmerica': 'America'
+        # store_details_df_filtered['continent'] = store_details_df_filtered['continent'].replace({'eeEurope': 'Europe', 'eeAmerica': 'America'})
+        # store_details_df_filtered['continent'] = store_details_df_filtered['continent'].astype('category')
+
+        # # Change datatype to string
+        # store_details_df_filtered['address'] = store_details_df_filtered['address'].astype('string')
+        # store_details_df_filtered['locality'] = store_details_df_filtered['locality'].astype('string')
+
+        # # Convert the 'opening_date' column to datetime format
+        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
+        # # To handle specific formats
+        # # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d'))
+        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='mixed'))
+        # # Convert 'expiry_date' to datetime format
+        # # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
+        # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
+
+        # print(store_details_df_filtered.info())
+        # print(store_details_df_filtered)
+
 
         return store_details_df_filtered
 

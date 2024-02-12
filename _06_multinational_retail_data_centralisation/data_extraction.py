@@ -8,6 +8,7 @@ import nbformat # save as .ipynb
 import requests
 import json
 import boto3
+import os # to create directories
 
 
 
@@ -25,24 +26,35 @@ class DataExtractor:
         return tables
     
     @staticmethod
-    def retrieve_pdf_data(pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"):
+    def retrieve_pdf_data(pdf_path):
+        # Extract data from the PDF
         date_details_df = tabula.read_pdf(pdf_path, pages='all')
         date_details_df = pd.concat(date_details_df)
-        print("Extracted PDF document from an AWS S3 bucket: ")
+        print("Extracted PDF document from an AWS S3 bucket:\n")
 
-        # Save the DataFrame as a CSV file
+        # Define the folder path where you want to save the CSV files
+        raw_csv_folder_path = '_01_raw_tables_csv'
+        # Ensure that the folder exists, create it if it doesn't
+        os.makedirs(raw_csv_folder_path, exist_ok=True)
+
+        # Save the DataFrame as a CSV file in the specified folder
         table_name = "card_details"
-        csv_filename = f"{table_name}.csv"
-        date_details_df.to_csv(csv_filename, index=False)
-        print(f"Saved '{table_name}' as '{csv_filename}'.")
+        raw_csv_filename = os.path.join(raw_csv_folder_path, f"{table_name}.csv")
+        date_details_df.to_csv(raw_csv_filename, index=False)
+        print(f"Saved '{table_name}' as '{raw_csv_filename}'.\n")
+
+        # Define the folder path where you want to save the notebooks
+        raw_notebook_folder_path = '_02_manipulate_raw_tables_ipynb'
+        # Ensure that the folder exists, create it if it doesn't
+        os.makedirs(raw_notebook_folder_path, exist_ok=True)
 
         # Create a new notebook
         notebook = nbformat.v4.new_notebook()
         # Add a code cell for the table to the notebook
         code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
-                                            f"# Import data from '{csv_filename}' into DataFrame.\n"
+                                            f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
                                             f"table_name = '{table_name}'\n"
-                                            f"csv_file_path = '{table_name}.csv'\n"
+                                            f"csv_file_path = '{raw_csv_filename}'\n"
                                             f"{table_name}_df = pd.read_csv(csv_file_path)\n"
                                             f"# Display the DataFrame\n"
                                             f"display({table_name}_df)")
@@ -50,12 +62,12 @@ class DataExtractor:
         notebook.cells.append(code_cell)
 
         # Save the notebook to a .ipynb file with a name based on the fixed extracted table
-        notebook_file = f"{table_name}.ipynb"
-        with open(notebook_file, 'w') as nb_file:
+        raw_notebook_filename = os.path.join(raw_notebook_folder_path, f"{table_name}.ipynb")
+        with open(raw_notebook_filename, 'w') as nb_file:
             nbformat.write(notebook, nb_file)
-            print(f"Saved '{table_name}' as '{notebook_file}'.\n")
-        
-        return date_details_df, table_name, csv_filename
+            print(f"Saved '{table_name}' as '{raw_notebook_filename}'.\n")
+
+        return date_details_df, table_name, raw_csv_filename
     
     @staticmethod
     def list_number_of_stores(number_of_stores_endpoint, headers):
@@ -109,22 +121,30 @@ class DataExtractor:
 
             # Convert the list of store data into a Pandas DataFrame
             stores_df = pd.DataFrame(all_stores_data)
+                
+            # Define the folder path where you want to save the CSV files
+            raw_csv_folder_path = '_01_raw_tables_csv'
+            # Ensure that the folder exists, create it if it doesn't
+            os.makedirs(raw_csv_folder_path, exist_ok=True)
 
-            #############
-
-            # Save the DataFrame as a CSV file
+             # Save the DataFrame as a CSV file in the specified folder
             table_name = "store_details"
-            csv_filename = f"{table_name}.csv"
-            stores_df.to_csv(csv_filename, index=False)
-            print(f"Saved '{table_name}' as '{csv_filename}'.")
+            raw_csv_filename = os.path.join(raw_csv_folder_path, f"{table_name}.csv")
+            stores_df.to_csv(raw_csv_filename, index=False)
+            print(f"Saved '{table_name}' as '{raw_csv_filename}'.\n")
+
+            # Define the folder path where you want to save the notebooks
+            raw_notebook_folder_path = '_02_manipulate_raw_tables_ipynb'
+            # Ensure that the folder exists, create it if it doesn't
+            os.makedirs(raw_notebook_folder_path, exist_ok=True)
 
             # Create a new notebook
             notebook = nbformat.v4.new_notebook()
             # Add a code cell for the table to the notebook
             code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
-                                                f"# Import data from '{csv_filename}' into DataFrame.\n"
+                                                f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
                                                 f"table_name = '{table_name}'\n"
-                                                f"csv_file_path = '{table_name}.csv'\n"
+                                                f"csv_file_path = '{raw_csv_filename}'\n"
                                                 f"{table_name}_df = pd.read_csv(csv_file_path)\n"
                                                 f"# Display the DataFrame\n"
                                                 f"display({table_name}_df)")
@@ -132,12 +152,12 @@ class DataExtractor:
             notebook.cells.append(code_cell)
 
             # Save the notebook to a .ipynb file with a name based on the fixed extracted table
-            notebook_file = f"{table_name}.ipynb"
-            with open(notebook_file, 'w') as nb_file:
+            raw_notebook_filename = os.path.join(raw_notebook_folder_path, f"{table_name}.ipynb")
+            with open(raw_notebook_filename, 'w') as nb_file:
                 nbformat.write(notebook, nb_file)
-                print(f"Saved '{table_name}' as '{notebook_file}'.\n")
-            
-            return stores_df, table_name, csv_filename
+                print(f"Saved '{table_name}' as '{raw_notebook_filename}'.\n")
+
+            return stores_df, table_name, raw_csv_filename
 
         except requests.RequestException as e:
             print(f"An error occurred: {e}")
@@ -236,9 +256,8 @@ class DataExtractor:
     #         print(f"\nAn unexpected error occurred: {e}")
     #         return None
 
-
     @staticmethod
-    def extract_from_s3(s3_address, local_file_path):
+    def extract_from_s3(s3_address, csv_path, ipynb_path):
         try:
             # Create S3 client
             s3 = boto3.client('s3')
@@ -247,23 +266,28 @@ class DataExtractor:
             bucket_name, object_key = s3_address.replace('s3://', '').split('/', 1)
 
             # Download the file from S3 to the local machine as a .csv and .ipynb
-            s3.download_file(bucket_name, object_key, local_file_path)
+            s3.download_file(bucket_name, object_key, csv_path)
 
             table_name = object_key.replace('products.csv', 'products_details')
-            csv_filename = f"{table_name}.csv"
-            print(f"Saved '{table_name}' as '{csv_filename}'.")
+            raw_csv_filename = f"{table_name}.csv"
+            print(f"Saved '{table_name}' as '{raw_csv_filename}'.")
 
             # Read the .csv file into a Pandas DataFrame
-            products_df = pd.read_csv(local_file_path, index_col=0)
+            products_df = pd.read_csv(csv_path, index_col=0)
 
             print(f"'{table_name}', shall be extracted: \n")
             print(products_df, "\n")
+
+            # Define the folder path where you want to save the notebooks
+            ipynb_path = '_02_manipulate_raw_tables_ipynb'
+            # Ensure that the folder exists, create it if it doesn't
+            os.makedirs(ipynb_path, exist_ok=True)
 
             # Create a new notebook
             notebook = nbformat.v4.new_notebook()
             # Add a code cell for the table to the notebook
             code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
-                                                f"# Import data from '{csv_filename}' into DataFrame.\n"
+                                                f"# Import data from '{raw_csv_filename}' into DataFrame.\n\n"
                                                 f"table_name = '{table_name}'\n"
                                                 f"csv_file_path = '{table_name}.csv'\n"
                                                 f"{table_name}_df = pd.read_csv(csv_file_path, index_col=0)\n"
@@ -273,12 +297,12 @@ class DataExtractor:
             notebook.cells.append(code_cell)
 
             # Save the notebook to a .ipynb file with a name based on the fixed extracted table
-            notebook_file = f"{table_name}.ipynb"
-            with open(notebook_file, 'w') as nb_file:
+            raw_notebook_filename = os.path.join(ipynb_path, f"{table_name}.ipynb")
+            with open(raw_notebook_filename, 'w') as nb_file:
                 nbformat.write(notebook, nb_file)
-                print(f"Saved '{table_name}' as '{notebook_file}'.\n")
+                print(f"Saved '{table_name}' as '{raw_notebook_filename}'.\n")
 
-            return products_df, table_name, csv_filename
+            return products_df, table_name, raw_csv_filename
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -286,37 +310,52 @@ class DataExtractor:
 
     @staticmethod
     def retrieve_json_data(json_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json"):
-        date_details_df = pd.read_json(json_path)
-        print("Extracted JSON document from an AWS S3 bucket: ")
+        try:
+            date_details_df = pd.read_json(json_path)
+            print("Extracted JSON document from an AWS S3 bucket:\n")
 
-        # Save the DataFrame as a CSV file
-        table_name = "date_details"
-        csv_filename = f"{table_name}.csv"
-        date_details_df.to_csv(csv_filename, index=True)
-        print(f"Saved '{table_name}' as '{csv_filename}'.")
+            # Define the folder path where you want to save the CSV files
+            raw_csv_folder_path = '_01_raw_tables_csv'
+            # Ensure that the folder exists, create it if it doesn't
+            os.makedirs(raw_csv_folder_path, exist_ok=True)
 
-        print(f"\n'{table_name}', shall be extracted: \n")
+            # Save the DataFrame as a CSV file in the specified folder
+            table_name = "date_details"
+            csv_filename = f"{table_name}.csv"
+            raw_csv_filename = os.path.join(raw_csv_folder_path, csv_filename)
+            date_details_df.to_csv(raw_csv_filename, index=True)
+            print(f"Saved '{table_name}' as '{raw_csv_filename}'.\n")
 
-        # Display the DataFrame
-        print(date_details_df, "\n")
+            print(f"'{table_name}', shall be extracted:\n")
 
-        # Create a new notebook
-        notebook = nbformat.v4.new_notebook()
-        # Add a code cell for the table to the notebook
-        code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
-                                            f"# Import data from '{csv_filename}' into DataFrame.\n"
-                                            f"table_name = '{table_name}'\n"
-                                            f"csv_file_path = '{table_name}.csv'\n"
-                                            f"{table_name}_df = pd.read_csv(csv_file_path)\n"
-                                            f"# Display the DataFrame\n"
-                                            f"display({table_name}_df)")
+            # Display the DataFrame
+            print(date_details_df, "\n")
 
-        notebook.cells.append(code_cell)
+            # Create a new notebook
+            notebook = nbformat.v4.new_notebook()
+            # Add a code cell for the table to the notebook
+            code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n\n"
+                                                f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
+                                                f"table_name = '{table_name}'\n"
+                                                f"csv_file_path = '{raw_csv_filename}'\n"
+                                                f"{table_name}_df = pd.read_csv(csv_file_path, index_col=0)\n"
+                                                f"# Display the DataFrame\n"
+                                                f"display({table_name}_df)")
 
-        # Save the notebook to a .ipynb file with a name based on the fixed extracted table
-        notebook_file = f"{table_name}.ipynb"
-        with open(notebook_file, 'w') as nb_file:
-            nbformat.write(notebook, nb_file)
-            print(f"Saved '{table_name}' as '{notebook_file}'.\n")
-        
-        return date_details_df, table_name, csv_filename
+            notebook.cells.append(code_cell)
+
+            # Save the notebook to a .ipynb file with a name based on the fixed extracted table
+            raw_notebook_folder_path = '_02_manipulate_raw_tables_ipynb'
+            # Ensure that the folder exists, create it if it doesn't
+            os.makedirs(raw_notebook_folder_path, exist_ok=True)
+            notebook_file = f"{table_name}.ipynb"
+            raw_notebook_filename = os.path.join(raw_notebook_folder_path, notebook_file)
+            with open(raw_notebook_filename, 'w') as nb_file:
+                nbformat.write(notebook, nb_file)
+                print(f"Saved '{table_name}' as '{raw_notebook_filename}'.\n")
+
+            return date_details_df, table_name, raw_csv_filename
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None

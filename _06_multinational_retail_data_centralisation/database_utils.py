@@ -5,7 +5,7 @@ from sklearn.datasets import load_iris
 class DatabaseConnector:
 
     @staticmethod
-    def read_db_creds(file_path='db_creds.yaml'):
+    def read_db_creds(file_path):
         with open(file_path, 'r') as file:
             credentials = yaml.safe_load(file)
         return credentials

@@ -16,7 +16,7 @@ class DataCleaning:
     @staticmethod
     def clean_user_data(selected_table_df):
 
-    # filtering mask created
+        # filtering mask created
         condition_to_exclude = (
             selected_table_df['first_name'].astype(str).str.contains('\d|NULL') |
             selected_table_df['last_name'].astype(str).str.contains('\d|NULL') |

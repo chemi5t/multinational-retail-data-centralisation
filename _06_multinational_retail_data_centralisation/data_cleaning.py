@@ -1,5 +1,5 @@
 import pandas as pd
-from database_utils import DatabaseConnector as dc
+from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc
 
 import numpy as np
 import nbformat

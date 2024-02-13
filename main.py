@@ -1,15 +1,14 @@
-from _06_multinational_retail_data_centralisation.data_cleaning import DataCleaning as dcl
-from _06_multinational_retail_data_centralisation.data_extraction import DataExtractor as dex
-from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc
-from decouple import config #  calling sensitive information
-
 import nbformat # save as .ipynb
 import pandas as pd
 import yaml # to read .yaml. Help with read_db
 import os # to create directories
 
+from _06_multinational_retail_data_centralisation.data_cleaning import DataCleaning as dcl
+from _06_multinational_retail_data_centralisation.data_extraction import DataExtractor as dex
+from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc
+from decouple import config #  calling sensitive information
 
-def setup_and_extract_data(file_path='06_multinational_retail_data_centralisation\db_creds.yaml', table_index = 2): # Step 1: Specify the correct file path
+def setup_and_extract_data(file_path='db_creds.yaml', table_index = 2): # Step 1: Specify the correct file path
     database_connector = dc()
     credentials = database_connector.read_db_creds(file_path)    # Step 2: Read credentials
     engine, engine2 = database_connector.init_db_engine(credentials)      # Step 3: Initialise database engine
@@ -35,9 +34,6 @@ def setup_and_extract_data(file_path='06_multinational_retail_data_centralisatio
 
     # Display the DataFrame
     print(selected_table_df, "\n")
-
-    
-    #######################################
 
     # Define the folder path where you want to save the CSV files
     raw_csv_folder_path = '_01_raw_tables_csv'
@@ -151,10 +147,10 @@ if __name__ == "__main__":
     print(f"Cleaned '{table_name}' DataFrame: \n")
     print(cleaned_date_df, "\n")
 
-    # # Define the folder path where you want to save the cleaned CSV files
-    # cleaned_csv_folder_path = '_03_cleaned_tables_csv'
-    # # Ensure that the folder exists, create it if it doesn't
-    # os.makedirs(cleaned_csv_folder_path, exist_ok=True)
+    # Define the folder path where you want to save the cleaned CSV files
+    cleaned_csv_folder_path = '_03_cleaned_tables_csv'
+    # Ensure that the folder exists, create it if it doesn't
+    os.makedirs(cleaned_csv_folder_path, exist_ok=True)
 
     # Save the cleaned DataFrame as a CSV file in the specified folder
     cleaned_csv_filename = os.path.join(cleaned_csv_folder_path, f"{table_name}_data_cleaned.csv")
@@ -258,8 +254,9 @@ if __name__ == "__main__":
     api_connector.upload_to_db(cleaned_user_df, 'orders_table', engine2)
 
     print("######################################## 6. date_events ########################################")
+    s3_address_date_events = cred_api['s3_address_date_events'] # access the .yaml key
     # Retrieve JSON data from the AWS S3 bucket and convert it to CSV format
-    date_details_df, table_name, raw_csv_filename = api_extractor.retrieve_json_data()
+    date_details_df, table_name, raw_csv_filename = api_extractor.retrieve_json_data(json_path = s3_address_date_events)
 
     # Clean the date events DataFrame
     date_details_df_filtered = data_cleaner.clean_date_data(date_details_df)

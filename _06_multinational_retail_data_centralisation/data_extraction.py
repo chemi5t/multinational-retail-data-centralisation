@@ -1,4 +1,4 @@
-from database_utils import DatabaseConnector
+from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector
 from sqlalchemy import inspect
 from urllib.parse import urlparse
 
@@ -71,6 +71,13 @@ class DataExtractor:
     
     @staticmethod
     def list_number_of_stores(number_of_stores_endpoint, headers):
+        """
+        The list_number_of_stores function sends a GET request to the API endpoint and returns the number of stores in the database.
+        
+        :param number_of_stores_endpoint: Specify the url of the api endpoint
+        :param headers: Pass the api key to the request
+        :return: The number of stores in the response json
+        """
         
         try:
             # Send GET request to the API
@@ -309,7 +316,7 @@ class DataExtractor:
             return None
 
     @staticmethod
-    def retrieve_json_data(json_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json"):
+    def retrieve_json_data(json_path):
         try:
             date_details_df = pd.read_json(json_path)
             print("Extracted JSON document from an AWS S3 bucket:\n")

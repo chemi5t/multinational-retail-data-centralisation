@@ -1,6 +1,6 @@
--- Milestone 3: Create the database schema (Casting columns to the correct data_types)
+-- Milestone 3: Create the database schema 
 
--- Task 1
+-- Task 1: Casting columns to the correct data_types
 ALTER TABLE orders_table
     ALTER COLUMN date_uuid TYPE UUID USING (date_uuid::UUID),
     ALTER COLUMN user_uuid TYPE UUID USING (user_uuid::UUID),
@@ -9,7 +9,7 @@ ALTER TABLE orders_table
     ALTER COLUMN product_code TYPE VARCHAR(255) USING (product_code::VARCHAR(255)), 
     ALTER COLUMN product_quantity TYPE SMALLINT USING (product_quantity::SMALLINT);
 
--- Task 2
+-- Task 2: Casting columns to the correct data_types
 ALTER TABLE dim_users
     ALTER COLUMN first_name TYPE VARCHAR(255) USING (first_name::VARCHAR(255)),
     ALTER COLUMN last_name TYPE VARCHAR(255) USING (last_name::VARCHAR(255)),
@@ -18,10 +18,10 @@ ALTER TABLE dim_users
     ALTER COLUMN user_uuid TYPE UUID USING (user_uuid::UUID),
     ALTER COLUMN join_date TYPE DATE USING (join_date::DATE);
 
--- Task 3
-SELECT *
-    FROM dim_store_details
-    WHERE longitude = 'N/A';
+-- Task 3:  Casting columns to the correct data_types
+-- SELECT *
+--     FROM dim_store_details
+--     WHERE longitude = 'N/A';
 
 UPDATE dim_store_details
     SET address = NULL
@@ -46,12 +46,10 @@ ALTER TABLE dim_store_details
     ALTER COLUMN country_code TYPE VARCHAR(255) USING (country_code::VARCHAR(255)), 
     ALTER COLUMN continent TYPE VARCHAR(255) USING (continent::VARCHAR(255));
 
--- Task 4
-
+-- Task 4:  Altering table to take weight_class column
 UPDATE dim_products  
     SET product_price = REPLACE(product_price, '£', '')  -- Step 1: Remove '£' character from 'product_price' values
     WHERE product_price LIKE '£%';
-
 
 ALTER TABLE dim_products 
     RENAME COLUMN product_price TO "product_price_(gbp)";  -- Step 2: Rename 'product_price' to 'product_price_(gbp)''
@@ -68,7 +66,7 @@ UPDATE dim_products  -- Step 4: Update weight_class based on weight ranges
             ELSE 'Very Heavy'
         END;
 
--- Task 5
+-- Task 5:  Casting columns to the correct data_types
 ALTER TABLE dim_products  -- Step 1: Rename 'removed' to 'still_available'
     RENAME COLUMN removed TO still_available;
 ALTER TABLE dim_products  -- Step 2: Change data types of columns
@@ -83,10 +81,11 @@ ALTER TABLE dim_products
     ALTER COLUMN date_added TYPE DATE USING (date_added::DATE);
 ALTER TABLE dim_products 
     ALTER COLUMN uuid TYPE UUID USING (uuid::UUID);
-    --ALTER COLUMN still_available TYPE boolean USING (still_available = 'Still_available'::text::boolean),
 ALTER TABLE dim_products
     ALTER COLUMN weight_class TYPE VARCHAR(255) USING (weight_class::VARCHAR(255));
 
+-- ALTER TABLE dim_products
+--     ALTER COLUMN still_available TYPE boolean USING (still_available = 'Still_available'::text::boolean);
 ALTER TABLE dim_products
     ALTER COLUMN still_available TYPE BOOLEAN USING
     CASE
@@ -94,7 +93,7 @@ ALTER TABLE dim_products
         ELSE FALSE
     END;
 
--- Task 6
+-- Task 6:  Casting columns to the correct data_types
 ALTER TABLE dim_date_times
     ALTER COLUMN month TYPE VARCHAR(255) USING (month::VARCHAR(255)),  -- Step 1: Change data types of columns
     ALTER COLUMN year TYPE VARCHAR(255) USING (year::VARCHAR(255)),
@@ -102,14 +101,14 @@ ALTER TABLE dim_date_times
     ALTER COLUMN time_period TYPE VARCHAR(255) USING (time_period::VARCHAR(255)),
     ALTER COLUMN date_uuid TYPE UUID USING (date_uuid::UUID);
 
--- Task 7
+-- Task 7:  Casting columns to the correct data_types
 ALTER TABLE dim_card_details
     ALTER COLUMN card_number TYPE VARCHAR(255) USING (card_number::VARCHAR(255)),  -- Step 1: Change data types of columns
     ALTER COLUMN expiry_date TYPE VARCHAR(255) USING (expiry_date::VARCHAR(255)),
     ALTER COLUMN date_payment_confirmed TYPE DATE USING (date_payment_confirmed::DATE);
 
 -- Task 8
--- Add primary key
+-- Create primary key in the dimensions tables
 ALTER TABLE dim_date_times
     ADD PRIMARY KEY (date_uuid); 
 ALTER TABLE dim_users
@@ -122,45 +121,10 @@ ALTER TABLE dim_card_details
     ADD PRIMARY KEY (card_number);
 
 -- Task 9
--- Add foreign key constraint
+-- Create foreign key constraints to finalise the star-schema
 ALTER TABLE orders_table
     ADD CONSTRAINT fk_orders_date FOREIGN KEY (date_uuid) REFERENCES dim_date_times(date_uuid),
     ADD CONSTRAINT fk_orders_user FOREIGN KEY (user_uuid)  REFERENCES dim_users(user_uuid),
     ADD CONSTRAINT fk_orders_store FOREIGN KEY (store_code) REFERENCES dim_store_details(store_code),
     ADD CONSTRAINT fk_orders_product FOREIGN KEY (product_code) REFERENCES dim_products(product_code),
     ADD CONSTRAINT fk_orders_card FOREIGN KEY (card_number) REFERENCES dim_card_details(card_number);
-
-
-
-
--- SELECT DISTINCT store_code FROM dim_store_details;
-
--- SELECT *
--- FROM orders_table
--- WHERE store_code IS NOT NULL  -- checking store_code
---   AND store_code NOT IN (SELECT store_code FROM dim_store_details WHERE store_code IS NOT NULL);
-
--- SELECT *
--- FROM dim_store_details
--- WHERE store_code IS NOT NULL  -- checking store_code
---   AND store_code NOT IN (SELECT store_code FROM orders_table WHERE store_code IS NOT NULL);
-
--- SELECT DISTINCT(ord.store_code)
--- FROM orders_table ord
--- WHERE NOT EXISTS
--- (SELECT * FROM dim_store_details dsd
--- WHERE dsd.store_code = ord.store_code);
-
--- SELECT DISTINCT(ord.product_code)
--- FROM orders_table ord
--- WHERE NOT EXISTS
--- (SELECT * FROM dim_products prod
--- WHERE prod.product_code = ord.product_code);
-
--- -- You can query this row like
--- SELECT * FROM orders_table
--- WHERE store_code = 'WEB-1388012W';
-
--- -- Ok, nice now try to run the same in
--- SELECT * FROM dim_store_details
--- WHERE store_code = 'WEB-1388012W';

@@ -26,43 +26,37 @@ class DataExtractor:
         return tables
     
     @staticmethod
-    def retrieve_pdf_data(pdf_path):
-        # Extract data from the PDF
-        date_details_df = tabula.read_pdf(pdf_path, pages='all')
+    def retrieve_pdf_data(pdf_path, raw_csv_folder_path, raw_notebook_folder_path):
+        date_details_df = tabula.read_pdf(pdf_path, pages='all')  # Extract data from the PDF
         date_details_df = pd.concat(date_details_df)
         print("Extracted PDF document from an AWS S3 bucket:\n")
 
-        # Define the folder path where you want to save the CSV files
-        raw_csv_folder_path = '_01_raw_tables_csv'
-        # Ensure that the folder exists, create it if it doesn't
-        os.makedirs(raw_csv_folder_path, exist_ok=True)
+        # # Define the folder path where you want to save the CSV files
+        # raw_csv_folder_path = '_01_raw_tables_csv'
 
-        # Save the DataFrame as a CSV file in the specified folder
-        table_name = "card_details"
+        os.makedirs(raw_csv_folder_path, exist_ok=True)  # Ensure that the folder exists, create it if it doesn't
+
+        table_name = "card_details"  # Save the DataFrame as a CSV file in the specified folder
         raw_csv_filename = os.path.join(raw_csv_folder_path, f"{table_name}.csv")
         date_details_df.to_csv(raw_csv_filename, index=False)
         print(f"Saved '{table_name}' as '{raw_csv_filename}'.\n")
 
-        # Define the folder path where you want to save the notebooks
-        raw_notebook_folder_path = '_02_manipulate_raw_tables_ipynb'
-        # Ensure that the folder exists, create it if it doesn't
-        os.makedirs(raw_notebook_folder_path, exist_ok=True)
+        # # Define the folder path where you want to save the notebooks
+        # raw_notebook_folder_path = '_02_manipulate_raw_tables_ipynb'
 
-        # Create a new notebook
-        notebook = nbformat.v4.new_notebook()
-        # Add a code cell for the table to the notebook
-        code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
+        os.makedirs(raw_notebook_folder_path, exist_ok=True)  # Ensure that the folder exists, create it if it doesn't
+
+        notebook = nbformat.v4.new_notebook()  # Create a new notebook
+        code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n\n"  # Add a code cell for the table to the notebook
                                             f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
                                             f"table_name = '{table_name}'\n"
                                             f"csv_file_path = '{raw_csv_filename}'\n"
                                             f"{table_name}_df = pd.read_csv(csv_file_path)\n"
                                             f"# Display the DataFrame\n"
                                             f"display({table_name}_df)")
-
         notebook.cells.append(code_cell)
 
-        # Save the notebook to a .ipynb file with a name based on the fixed extracted table
-        raw_notebook_filename = os.path.join(raw_notebook_folder_path, f"{table_name}.ipynb")
+        raw_notebook_filename = os.path.join(raw_notebook_folder_path, f"{table_name}.ipynb")  # Save the notebook to a .ipynb file with a name based on the fixed extracted table
         with open(raw_notebook_filename, 'w') as nb_file:
             nbformat.write(notebook, nb_file)
             print(f"Saved '{table_name}' as '{raw_notebook_filename}'.\n")

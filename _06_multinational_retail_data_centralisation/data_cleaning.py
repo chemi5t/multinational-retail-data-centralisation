@@ -116,8 +116,8 @@ class DataCleaning:
         # Filter out letters from the 'staff_numbers'
         store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
 
-        # # # Change datatype to int64
-        # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
+                    # # # Change datatype to int64
+                    # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
 
         # Change datatype to string
         store_details_df_filtered['address'] = store_details_df_filtered['address'].astype('string')
@@ -125,18 +125,16 @@ class DataCleaning:
         # Change datatype to string
         store_details_df_filtered['locality'] = store_details_df_filtered['locality'].astype('string')
 
-
-
         store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
-        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
-
-        # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d')
-
-
-        store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'].notnull()]
         
-        print("isnull values:")
-        print(store_details_df_filtered['country_code'].isnull().sum())
+                    # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
+
+                    # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d')
+
+        # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'].notnull()]
+        
+        # print("isnull values:")
+        # print(store_details_df_filtered['country_code'].isnull().sum())
 
         # Convert 'country_code' to string
         store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('str')
@@ -144,12 +142,8 @@ class DataCleaning:
         # Remove rows where 'country_code' is NULL
         store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'] != 'NULL']
 
-
         display(store_details_df_filtered.info())
         display(store_details_df_filtered)
-
-
-
 
         # # Filter and include rows where 'lat' values are isnull
         # store_details_df_filtered = store_details_df[store_details_df['lat'].isnull()]
@@ -190,7 +184,6 @@ class DataCleaning:
 
         # print(store_details_df_filtered.info())
         # print(store_details_df_filtered)
-
 
         return store_details_df_filtered
 

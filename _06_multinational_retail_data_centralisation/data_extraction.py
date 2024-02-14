@@ -75,7 +75,7 @@ class DataExtractor:
         code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n\n"  # Add a code cell for the table to the notebook
                                             f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
                                             f"table_name = '{table_name}'\n"
-                                            f"csv_file_path = '{raw_csv_filename}'\n"
+                                            f"csv_file_path = '..\{raw_csv_filename}'\n"
                                             f"{table_name}_df = pd.read_csv(csv_file_path)\n"
                                             f"# Display the DataFrame\n"
                                             f"display({table_name}_df)")
@@ -164,7 +164,7 @@ class DataExtractor:
             code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"  # Add a code cell for the table to the notebook
                                                 f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
                                                 f"table_name = '{table_name}'\n"
-                                                f"csv_file_path = '{raw_csv_filename}'\n"
+                                                f"csv_file_path = '..\{raw_csv_filename}'\n"
                                                 f"{table_name}_df = pd.read_csv(csv_file_path)\n"
                                                 f"# Display the DataFrame\n"
                                                 f"display({table_name}_df)"
@@ -217,7 +217,7 @@ class DataExtractor:
             code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"  # Add a code cell for the table to the notebook
                                                     f"# Import data from '{raw_csv_filename}' into DataFrame.\n\n"
                                                     f"table_name = '{table_name}'\n"
-                                                    f"csv_file_path = '{table_name}.csv'\n"
+                                                    f"csv_file_path = '..\{table_name}.csv'\n"
                                                     f"{table_name}_df = pd.read_csv(csv_file_path, index_col=0)\n"
                                                     f"# Display the DataFrame\n"
                                                     f"display({table_name}_df)"
@@ -270,7 +270,7 @@ class DataExtractor:
             code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n\n"  # Add a code cell for the table to the notebook
                                                 f"# Import data from '{raw_csv_filename}' into DataFrame.\n"
                                                 f"table_name = '{table_name}'\n"
-                                                f"csv_file_path = '{raw_csv_filename}'\n"
+                                                f"csv_file_path = '..\{raw_csv_filename}'\n"
                                                 f"{table_name}_df = pd.read_csv(csv_file_path, index_col=0)\n"
                                                 f"# Display the DataFrame\n"
                                                 f"display({table_name}_df)")

@@ -1,5 +1,4 @@
 -- Milestone 3: Create the database schema 
-
 -- Task 1: Casting columns to the correct data_types
 ALTER TABLE orders_table
     ALTER COLUMN date_uuid TYPE UUID USING (date_uuid::UUID),

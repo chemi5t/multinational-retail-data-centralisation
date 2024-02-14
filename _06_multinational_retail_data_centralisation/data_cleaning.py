@@ -1,27 +1,41 @@
-import pandas as pd
-from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc
-
-import numpy as np
-import nbformat
-import plotly.express as px
-import missingno as msno
-import re
 from dateutil.parser import parse # to help with datatime edits
 from IPython.display import display
-import requests
+# from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc
+
+import numpy as np
+import pandas as pd
+import re
+# import nbformat
+# import plotly.express as px
+# import missingno as msno
+# import requests
 
 
 class DataCleaning:
-    
+    """
+    A class containing static methods to clean different types of data.
+    """
     @staticmethod
     def clean_user_data(selected_table_df):
+        """
+        The clean_user_data function takes in a DataFrame containing user data and returns a cleaned version of the same.
+        The function first filters out rows that contain invalid values for 'first_name', 'last_name', or 'country'.
+        It then replaces all instances of GGB with GB, converts both date columns to datetime, changes the data type 
+        of 'phone_numbers', 'user_uuid' and 'email_address' to string. Also changes data type of 'country', 'country_code' 
+        and 'company' to 'category'
+
+        Args:
+            selected_table_df (pandas.DataFrame): The DataFrame containing user data.
+
+        Returns:
+            pandas.DataFrame: Cleaned user data.
+        """
 
         # filtering mask created
-        condition_to_exclude = (
-            selected_table_df['first_name'].astype(str).str.contains('\d|NULL') |
-            selected_table_df['last_name'].astype(str).str.contains('\d|NULL') |
-            selected_table_df['country'].astype(str).str.contains('\d|NULL')
-            )
+        condition_to_exclude = (selected_table_df['first_name'].astype(str).str.contains('\d|NULL') |
+                                selected_table_df['last_name'].astype(str).str.contains('\d|NULL') |
+                                selected_table_df['country'].astype(str).str.contains('\d|NULL')
+                                )
         
         # Apply the filter and convert the specified columns to string datatype
         legacy_users_df_filtered = selected_table_df[~condition_to_exclude].astype({'first_name': 'string', 'last_name': 'string', 'country': 'string'})
@@ -49,6 +63,15 @@ class DataCleaning:
 
         # Define a function to clean phone numbers and convert to string
         def clean_and_convert_to_string(phone_numbers):
+            """
+            The clean_and_convert_to_string function takes in a list of phone numbers and removes all non-numeric characters, except '(', ')', and '+'.
+            
+            Parameters:
+                phone_numbers (str): A string containing phone numbers.
+            
+            Returns:
+                str: The cleaned phone number string.
+            """
             # Remove non-numeric characters, except '(', ')', and '+'
             cleaned_number = re.sub(r'[^0-9()+]+', '', phone_numbers)
             return cleaned_number
@@ -60,8 +83,20 @@ class DataCleaning:
  
     @staticmethod
     def clean_card_data(card_details_df):
+        """
+        The clean_card_data function takes a DataFrame containing card details as input and returns a cleaned version of the same.
+        The cleaning process involves removing rows where all values are null in the DataFrame. Converting 'expiry_date' to datetime 
+        format (month/year). Removing rows 'expiry_date' is null. Converting 'date_payment_confirmed' to datetime format (year-month-day). 
+        Converting 'card_provider' to datatype 'category'. Removing '?' from 'card_number' column and converting to datatype 'string'.
+        
+        Args:
+            card_details_df (pandas.DataFrame): The DataFrame containing card details.
+
+        Returns:
+            pandas.DataFrame: Cleaned card details.
+        """
          
-        # Remove rows where "card_number" is null
+        # Remove rows where all values are null in the DataFrame
         card_details_df_filtered = card_details_df.dropna(how='all')
 
         # Convert 'expiry_date' to datetime format
@@ -88,6 +123,15 @@ class DataCleaning:
     
     @staticmethod
     def called_clean_store_data(store_details_df):
+        """
+        The called_clean_store_data function cleans the store details data.
+
+        Args:
+            store_details_df (pandas.DataFrame): The DataFrame containing store details.
+
+        Returns:
+            pandas.DataFrame: Cleaned store details.
+        """
         # drop na from 'continent' column
         store_details_df_filtered = store_details_df.dropna(subset=['continent'])
 
@@ -116,9 +160,6 @@ class DataCleaning:
         # Filter out letters from the 'staff_numbers'
         store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
 
-                    # # # Change datatype to int64
-                    # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
-
         # Change datatype to string
         store_details_df_filtered['address'] = store_details_df_filtered['address'].astype('string')
 
@@ -126,15 +167,6 @@ class DataCleaning:
         store_details_df_filtered['locality'] = store_details_df_filtered['locality'].astype('string')
 
         store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
-        
-                    # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
-
-                    # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d')
-
-        # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'].notnull()]
-        
-        # print("isnull values:")
-        # print(store_details_df_filtered['country_code'].isnull().sum())
 
         # Convert 'country_code' to string
         store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('str')
@@ -142,54 +174,37 @@ class DataCleaning:
         # Remove rows where 'country_code' is NULL
         store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['country_code'] != 'NULL']
 
-        display(store_details_df_filtered.info())
-        display(store_details_df_filtered)
-
-        # # Filter and include rows where 'lat' values are isnull
-        # store_details_df_filtered = store_details_df[store_details_df['lat'].isnull()]
-
-        # store_details_df_filtered = store_details_df_filtered.drop('lat', axis=1)
-
-        #             # # Filter and exclude rows where 'longitude' values are isnull i.e. we want notnull rows
-        #             # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['longitude'].notnull()]
-
-        # # Filter and exclude rows where 'store_code' values are isnull i.e. we want notnull rows
-        # store_details_df_filtered = store_details_df_filtered[store_details_df_filtered['store_code'].notnull()]
-    
-        # # Filter out letters from the 'staff_numbers'
-        # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].str.replace(r'[^0-9]', '', regex=True)
-        # store_details_df_filtered['staff_numbers'] = store_details_df_filtered['staff_numbers'].astype('int64')
-
-        # # Change datatype
-        # store_details_df_filtered['store_type'] = store_details_df_filtered['store_type'].astype('category')
-        # store_details_df_filtered['store_code'] = store_details_df_filtered['store_code'].astype('string')
-        # store_details_df_filtered['country_code'] = store_details_df_filtered['country_code'].astype('category')
-
-        # # Replace 'eeEurope': 'Europe', 'eeAmerica': 'America'
-        # store_details_df_filtered['continent'] = store_details_df_filtered['continent'].replace({'eeEurope': 'Europe', 'eeAmerica': 'America'})
-        # store_details_df_filtered['continent'] = store_details_df_filtered['continent'].astype('category')
-
-        # # Change datatype to string
-        # store_details_df_filtered['address'] = store_details_df_filtered['address'].astype('string')
-        # store_details_df_filtered['locality'] = store_details_df_filtered['locality'].astype('string')
-
-        # # Convert the 'opening_date' column to datetime format
-        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].apply(parse)
-        # # To handle specific formats
-        # # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='%Y %B %d'))
-        # store_details_df_filtered['opening_date'] = store_details_df_filtered['opening_date'].combine_first(pd.to_datetime(store_details_df_filtered['opening_date'], errors='coerce', format='mixed'))
-        # # Convert 'expiry_date' to datetime format
-        # # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='%y-%m-%d', errors='coerce')
-        # store_details_df_filtered['opening_date'] = pd.to_datetime(store_details_df_filtered['opening_date'], format='mixed', errors='coerce')
-
-        # print(store_details_df_filtered.info())
-        # print(store_details_df_filtered)
+        # display(store_details_df_filtered.info())
+        # display(store_details_df_filtered)
 
         return store_details_df_filtered
 
     @staticmethod
     def convert_product_weights(products_df_filtered):
+        """
+        The convert_product_weights function takes a DataFrame as input and returns the same DataFrame with weights converted to kilograms.
+        The function can handle strings with or without units, and it can also handle multiplication of two weights.
+        For example:
+            - '100g' will be converted to 0.100 kg
+            - '2 x 100g' will be converted to 0.200 kg (i.e., 2 * 100 g)
+
+        Args:
+            products_df_filtered (pandas.DataFrame): The DataFrame containing product details.
+
+        Returns:
+            pandas.DataFrame: Cleaned product details with weights converted to kilograms.
+        """
         def convert_weight(value):
+            """
+            The convert_weight function takes a string as input and returns the weight in kilograms.
+            The function can handle strings with or without units, and it can also handle multiplication of two weights.
+            
+            Args:
+                value (string): Pass the value to be converted.
+
+            Returns:
+                float: The converted weight.
+            """
             try:
                 # Check if the value contains 'x' indicating a multiplication
                 if 'x' in value:
@@ -250,6 +265,15 @@ class DataCleaning:
 
     @staticmethod
     def clean_products_data(products_df):
+        """
+        The clean_products_data function cleans the products data.
+
+        Args:
+            products_df (pandas.DataFrame): The DataFrame containing product details.
+
+        Returns:
+            pandas.DataFrame: Cleaned product details.
+        """
         # Show rows where 'product_price' values are notnull
         products_df_filtered = products_df[products_df['product_price'].notnull()]
 
@@ -271,6 +295,16 @@ class DataCleaning:
     
     @staticmethod
     def clean_orders_data(selected_table_df):
+        """
+        The clean_orders_data function takes in a pandas DataFrame containing order details and returns a cleaned version of the same.
+        The function drops specified columns from the original DataFrame, namely: first_name, last_name and 1.
+
+        Args:
+            selected_table_df (pandas.DataFrame): The DataFrame containing order details.
+
+        Returns:
+            pandas.DataFrame: Cleaned order details.
+        """
         # Drop specified columns
         columns_to_drop = ['first_name', 'last_name', '1']
         orders_df_filtered = selected_table_df.drop(columns=columns_to_drop)
@@ -279,6 +313,17 @@ class DataCleaning:
         
     @staticmethod
     def clean_date_data(date_details_df):
+        """
+        The clean_date_data function takes in a dataframe of date details and filters out the rows that do not contain
+        the time periods 'Evening', 'Morning', 'Midday' or 'Late_Hours'. It then converts the column containing these values
+        to a category datatype. The function returns this cleaned dataframe.
+
+        Args:
+            date_details_df (pandas.DataFrame): The DataFrame containing date details.
+
+        Returns:
+            pandas.DataFrame: Cleaned date details.
+        """
         # filtering mask created
         condition_to_include = date_details_df['time_period'].astype(str).str.contains('Evening|Morning|Midday|Late_Hours')
         date_details_df_filtered = date_details_df[condition_to_include]

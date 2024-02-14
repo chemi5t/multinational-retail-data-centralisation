@@ -41,7 +41,7 @@ def setup_and_extract_data(cred_path: str, table_index: int = 2): # Step 1: Spec
         table_index (int): Index of the table to extract data from.
 
     Returns:
-        tuple: DataFrame containing selected table data, name of the selected table, and database engine.
+        tuple: DataFrame containing selected table data, name of the selected table and database engine.
     """
     tables = data_extractor.list_db_tables(engine)  # Step 4: List all tables in the database
     print("Available Tables:\n") 
@@ -89,7 +89,7 @@ def one_etl_leagacy_users():
     It saves that cleaned DataFrame as a CSV file in our cleaned CSVs folder.
     Finally, it uploads that cleaned DataFrame to pgAdmin 4 using SQLAlchemy.   
     """
-    selected_table_df, selected_table, engine2 = setup_and_extract_data(table_index = 2)
+    selected_table_df, selected_table, engine2 = setup_and_extract_data(cred_path = cred_path, table_index = 2)
     cleaned_user_df = data_cleaner.clean_user_data(selected_table_df)  # Clean the selected table DataFrame
     print(f"Cleaned '{selected_table}' DataFrame: \n")
     print(cleaned_user_df, "\n")
@@ -110,7 +110,10 @@ def two_etl_card_details():
     Finally, it uploads that cleaned DataFrame to pgAdmin 4 using SQLAlchemy.   
     """
     s3_card_details = cred_config_api['s3_card_details'] # access the .yaml key
-    date_details_df, table_name, raw_csv_filename = data_extractor.retrieve_pdf_data(pdf_path = s3_card_details)  # Retrieve PDF from AWS S3 bucket and convert to CSV
+    date_details_df, table_name, raw_csv_filename = data_extractor.retrieve_pdf_data(pdf_path = s3_card_details, 
+                                                                                     raw_csv_folder_path = raw_csv_folder_path, 
+                                                                                     raw_notebook_folder_path = raw_notebook_folder_path 
+                                                                                     )  # Retrieve PDF from AWS S3 bucket and convert to CSV
     print(f"'{table_name}', shall be extracted.\n")
     print(date_details_df, "\n")  # Display the DataFrame
 
@@ -141,7 +144,9 @@ def three_etl_store_details():
     print(f"The number of stores to retrieve data from: {number_of_stores}")
     stores_df, table_name, csv_filename = data_extractor.retrieve_stores_data(retrieve_a_store_endpoint, 
                                                                               headers, 
-                                                                              number_of_stores
+                                                                              number_of_stores,
+                                                                              raw_csv_folder_path,
+                                                                              raw_notebook_folder_path
                                                                               )  # retrieve data for all stores and save in a Pandas df
     if stores_df is not None:
         print(f"'{table_name}', shall be extracted.\n")
@@ -201,7 +206,7 @@ def five_etl_orders_details():
     Next it saves that cleaned DataFrame as a CSV file in a specified folder on disk (the 'cleaned' subfolder).
     Finally, it uploads that cleaned DataFrame to pgAdmin 4 using SQLAlchemy.   
     """
-    selected_table_df, selected_table, engine2 = setup_and_extract_data(table_index = 3)
+    selected_table_df, selected_table, engine2 = setup_and_extract_data(cred_path = cred_path, table_index = 3)
     cleaned_user_df = data_cleaner.clean_orders_data(selected_table_df)  # Clean the selected table DataFrame
     print(f"Cleaned '{selected_table}' DataFrame: \n")
     print(cleaned_user_df, "\n")
@@ -222,7 +227,7 @@ def six_etl_date_events():
     Finally, it uploads that cleaned DataFrame to pgAdmin 4 using SQLAlchemy.  
     """
     s3_address_date_events = cred_config_api['s3_address_date_events'] # access the .yaml key
-    date_details_df, table_name, raw_csv_filename = data_extractor.retrieve_json_data(json_path = s3_address_date_events)  # Retrieve JSON data from the AWS S3 bucket and convert it to CSV format
+    date_details_df, table_name, raw_csv_filename = data_extractor.retrieve_json_data(json_path = s3_address_date_events, raw_notebook_folder_path = raw_notebook_folder_path)  # Retrieve JSON data from the AWS S3 bucket and convert it to CSV format
     date_details_df_filtered = data_cleaner.clean_date_data(date_details_df)  # Clean the date events DataFrame
     print(f"Cleaned '{table_name}' DataFrame:\n")  # Display the cleaned DataFrame
     print(date_details_df_filtered, "\n")

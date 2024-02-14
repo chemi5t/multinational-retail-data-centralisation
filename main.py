@@ -63,15 +63,22 @@ def setup_and_extract_data(cred_path: str, table_index: int = 2): # Step 1: Spec
 
     os.makedirs(raw_notebook_folder_path, exist_ok=True)  # Ensure that the folder exists, create it if it doesn't
     notebook = nbformat.v4.new_notebook()  # Create a new notebook and add a code cell for the table to the notebook
-    code_cell = nbformat.v4.new_code_cell( f"import pandas as pd\n"
+    code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
+                                            f"import sys\n"
+                                            f"sys.path.append(r'C:\Users\chemi\AiCore_Projects\multinational-retail-data-centralisation946')\n"
+                                            f"sys.path.append('c:\\Users\\chemi\\AiCore_Projects\\multinational-retail-data-centralisation946')\n"
+                                            f"sys.path.append('c:\\Users\\chemi\\AiCore_Projects\\multinational-retail-data-centralisation946')\n"
+                                            f"sys.path.append('..\\multinational-retail-data-centralisation946')\n\n"
                                             f"from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc\n\n"
                                             f"api_connector = dc()\n"
-                                            f"credentials = api_connector.read_db_creds('{cred_path}')\n"
+                                            f"credentials = api_connector.read_db_creds('..\{cred_path}')\n"
                                             f"engine, _ = api_connector.init_db_engine(credentials)\n"
                                             f"# Import data from '{selected_table}' table into DataFrame\n"
                                             f"{selected_table}_df = pd.read_sql('{selected_table}', engine)\n"
                                             f"# Display the DataFrame\n"
-                                            f"{selected_table}_df")         
+                                            f"{selected_table}_df"
+                                            )
+
     notebook.cells.append(code_cell)
 
     raw_notebook_filename = os.path.join(raw_notebook_folder_path, f"{selected_table}.ipynb")  # Save the notebook to a .ipynb file in the specified folder

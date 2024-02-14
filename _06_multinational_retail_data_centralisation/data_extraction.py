@@ -224,7 +224,7 @@ class DataExtractor:
                                                     )
             notebook.cells.append(code_cell)
 
-            raw_notebook_filename = os.path.join(ipynb_path, f"{table_name}.ipynb")  # Save the notebook to a .ipynb file with a name based on the fixed extracted table
+            raw_notebook_filename = os.path.join(raw_notebook_folder_path, f"{table_name}.ipynb")  # Save the notebook to a .ipynb file with a name based on the fixed extracted table
             with open(raw_notebook_filename, 'w') as nb_file:
                 nbformat.write(notebook, nb_file)
                 print(f"Saved '{table_name}' as '{raw_notebook_filename}'.\n")

@@ -178,7 +178,8 @@ def four_etl_product_details():
     local_ipynb_file_path_products = cred_config_api['local_ipynb_file_path_products'] 
     products_df, table_name, csv_filename = data_extractor.extract_from_s3(s3_address = s3_address_products, 
                                                                           csv_path = local_csv_file_path_products, 
-                                                                          ipynb_path = local_ipynb_file_path_products
+                                                                          ipynb_path = local_ipynb_file_path_products,
+                                                                          raw_notebook_folder_path = raw_notebook_folder_path
                                                                           )
     if products_df is not None:
         print(f"'{table_name}', shall be extracted.\n")
@@ -227,7 +228,10 @@ def six_etl_date_events():
     Finally, it uploads that cleaned DataFrame to pgAdmin 4 using SQLAlchemy.  
     """
     s3_address_date_events = cred_config_api['s3_address_date_events'] # access the .yaml key
-    date_details_df, table_name, raw_csv_filename = data_extractor.retrieve_json_data(json_path = s3_address_date_events, raw_notebook_folder_path = raw_notebook_folder_path)  # Retrieve JSON data from the AWS S3 bucket and convert it to CSV format
+    date_details_df, table_name, raw_csv_filename = data_extractor.retrieve_json_data(json_path = s3_address_date_events, 
+                                                                                      raw_notebook_folder_path = raw_notebook_folder_path,
+                                                                                      raw_csv_folder_path = raw_csv_folder_path
+                                                                                      )  # Retrieve JSON data from the AWS S3 bucket and convert it to CSV format
     date_details_df_filtered = data_cleaner.clean_date_data(date_details_df)  # Clean the date events DataFrame
     print(f"Cleaned '{table_name}' DataFrame:\n")  # Display the cleaned DataFrame
     print(date_details_df_filtered, "\n")

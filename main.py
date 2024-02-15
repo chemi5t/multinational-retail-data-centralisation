@@ -65,8 +65,8 @@ def setup_and_extract_data(cred_path: str, table_index: int = 2): # Step 1: Spec
     notebook = nbformat.v4.new_notebook()  # Create a new notebook and add a code cell for the table to the notebook
     code_cell = nbformat.v4.new_code_cell(f"import pandas as pd\n"
                                             f"import sys\n"
-                                            f"sys.path.append('C:\\\\Users\\\\chemi\\\\AiCore_Projects\\\\multinational-retail-data-centralisation946')\n"
-                                            f"sys.path.append(r'c:\\Users\\chemi\\AiCore_Projects\\multinational-retail-data-centralisation946')\n"
+                                            f"sys.path.append('C:\\\\Users\\\\chemi\\\\AiCore_Projects\\\\multinational-retail-data-centralisation')\n"
+                                            f"sys.path.append(r'c:\\Users\\chemi\\AiCore_Projects\\multinational-retail-data-centralisation')\n"
                                             #f"sys.path.append(r'..\multinational-retail-data-centralisation946')\n"
                                             #f"sys.path.append('..\\multinational-retail-data-centralisation946')\n\n"
                                             f"from _06_multinational_retail_data_centralisation.database_utils import DatabaseConnector as dc\n\n"

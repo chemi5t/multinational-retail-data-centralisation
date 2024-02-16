@@ -83,9 +83,65 @@ Overall this section focused on developing your skill over the understanding of 
 
 # File structure of the project
 
-There are seven folders: 
+There are seven folders and the root folder: 
 
-/classes contains:
+- /_01_raw_tables_csv 
+    - card_details.csv
+    - date_details.csv
+    - legacy_users.csv
+    - orders_tabl.csv
+    - products_details.csv
+    - store_details.csv
+
+- /_02_manipulate_raw_tables_ipynb 
+    - card_details.ipynb
+    - date_details.ipynb
+    - legacy_users.ipynb
+    - orders_tabl.ipynb
+    - products_details.ipynb
+    - store_details.ipynb
+
+- /_03_cleaned_tables_csv 
+    - card_details_data_cleaned.csv
+    - date_details_data_cleaned.csv
+    - legacy_users_data_cleaned.csv
+    - orders_tabl_data_cleaned.csv
+    - products_details_data_cleaned.csv
+    - store_details_data_cleaned.csv
+
+- /_04_cleaned_tables_ipynb 
+    - card_details_data_cleaned.ipynb
+    - date_details_data_cleaned.ipynb
+    - legacy_users_data_cleaned.ipynb
+    - orders_tabl_data_cleaned.ipynb
+    - products_details_data_cleaned.ipynb
+    - store_details_data_cleaned.ipynb
+
+- /_05_SQL
+    - _01_star_schema_sales_data.sql
+    - _02_queries.sql
+    - _03_drop_table_query.sql
+
+- /_06_multinational_retail_data_centralisation
+    - data_cleaning.py
+    - data_extraction.py
+    - database_utils.py
+
+- /_07_images 
+    - Contains image files
+
+- /root
+    - .env
+    - .gitignore
+    - conda_requirements.txt
+    - db_creds.yaml
+    - main.py
+    - pip_requirements.txt
+    - README.md
+    - requirements.txt
+
+
+    
 
 data_cleaning.py
 data_extraction.py

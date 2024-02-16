@@ -1,4 +1,3 @@
-do_not_track/
 *.yaml
 *.env
 __pycache__/

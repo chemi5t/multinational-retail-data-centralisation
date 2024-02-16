@@ -98,7 +98,7 @@ FROM sum_of_sales
 CROSS JOIN total_sales_all
 ORDER BY average_sum_of_payments DESC;
 
--- Task 6. Which month in each year produced the highest cost of sales?
+-- Task 6b. Which months in each year produced the highest cost of sales?
 SELECT
 	ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales,
 	ddt.year,
@@ -114,32 +114,33 @@ GROUP BY
 ORDER BY total_sales DESC
 LIMIT 10;
 
--- otherwise if we were to target the month that has the most sales from each year alone then see below.
+-- Otherwise if we were to target the month alone that has the most sales from each year alone then see below.
 
-			-- WITH monthly_sales AS (
-			--     SELECT
-			--         ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales,
-			--         ddt.year,
-			--         ddt.month,
-			--         ROW_NUMBER() OVER (PARTITION BY ddt.year ORDER BY SUM(ot.product_quantity * dp."product_price_(gbp)") DESC) AS month_rank
-			--     FROM dim_date_times AS ddt
-			--     JOIN orders_table AS ot ON ddt.date_uuid = ot.date_uuid
-			--     JOIN dim_products AS dp ON ot.product_code = dp.product_code
-			--     GROUP BY 
-			--         ddt.year,
-			--         ddt.month
-			-- )
-			-- SELECT
-			--     ms.total_sales,
-			--     ms.year,
-			--     ms.month
-			-- FROM
-			--     monthly_sales AS ms
-			-- WHERE
-			--     month_rank = 1
-			-- ORDER BY
-			-- 	total_sales DESC
-			-- LIMIT 10;
+-- Task 6a. Which month in each year produced the highest cost of sales?
+WITH monthly_sales AS (
+	SELECT
+		ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales,
+		ddt.year,
+		ddt.month,
+		ROW_NUMBER() OVER (PARTITION BY ddt.year ORDER BY SUM(ot.product_quantity * dp."product_price_(gbp)") DESC) AS month_rank
+	FROM dim_date_times AS ddt
+	JOIN orders_table AS ot ON ddt.date_uuid = ot.date_uuid
+	JOIN dim_products AS dp ON ot.product_code = dp.product_code
+	GROUP BY 
+		ddt.year,
+		ddt.month
+)
+SELECT
+	ms.total_sales,
+	ms.year,
+	ms.month
+FROM
+	monthly_sales AS ms
+WHERE
+	month_rank = 1
+ORDER BY
+	total_sales DESC
+LIMIT 10;
 
 -- Task 7. What is our staff headcount?
 SELECT 
@@ -174,3 +175,14 @@ GROUP BY
 ORDER BY
 	total_sales 
 LIMIT 10;
+
+
+-- Task 9: How quickly is the company making sales?
+-- work in progress
+SELECT ddt.year, ROUND(8760/COUNT(ddt.year)::numeric, 4) AS average_time_between_sales_in_a_year
+FROM orders_table AS ot
+JOIN dim_date_times AS ddt
+ON ot.date_uuid = ddt.date_uuid
+GROUP BY ddt.year
+ORDER BY average_time_between_sales_in_a_year DESC;
+

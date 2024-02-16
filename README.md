@@ -7,11 +7,12 @@ The Multinational Retail Data Centralisation Project aims to address the challen
 
 # Project Milestones 1 to 4
 
-Refer to the appendix for a step by step guide of how the project was conducted. 
+Refer to the appendix for a step by step guide of how the project was conducted. Here you will find answers to several business questions that required querying the sales_data database using SQLTools/pgAdmin 4.
 
 ## Milestone summary
 
 **Outcomes from Milestone 1 (Setting up the environment):** Prerequisites and setup of laptop and GitHub were successful. The project can now be saved and tracked for changes via Git and GitHub. Visual Studio Code was used for writing the code.
+
 
 **Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):** Milestone 2 continues from Milestone 1. The company's current up-to-date data is stored in a database locally titled 'sales_data' in 'pgAdmin 4' so that it is accessed from one centralised location and acts as a single point of reference for sales data. Data has been extracted from various sources in JSON, CSV, and PDF formats hosted on different platforms. Data was cleaned using pandas and stored in a local PostgreSQL database, pgAdmin 4, using SQLAlchemy. Progress was updated to the repository on GitHub, and code reviewed for better maintainability and efficiency.
 
@@ -34,6 +35,7 @@ These classes were all called within a main.py file where the ETL (Extract, Tran
             | orders_table     | AWS RDS database    | SQLAlchemy        | orders_table        |
             | date_details     | AWS S3 bucket (JSON)| boto3             | dim_date_times      |
 
+
 **Outcomes from Milestone 3 (Creating the database schema):** Milestone 3 continues from Milestone 2. Columns in the following tables were all cast to the correct data types using SQL, ensuring consistency and accuracy: orders_table, dim_users, dim_store_details, dim_products, dim_date_times and dim_card_details. 
 
 It was found the dim_store_details table did not require merging the 'latitude' columns as the data in the 'lat' column has all been isloated and found to not be of use and the column dropped. 
@@ -43,9 +45,10 @@ Changes were made to the dim_products table via SQL; removal of '£' from the va
 Primary keys were added to dimension (dim) tables, establishing the foundation for the star-based schema. Foreign keys were created in the orders_table to reference primary keys in other dimension tables, completing the star-based schema. Latest code changes, including schema modifications, were pushed to the GitHub repository, and the README file was updated to reflect the project's progress and structure.
 
 **Entity-Relationship Diagram (ERD) for the 'sales_data' database in 'pgAdmin 4'.**
-![ERD for database](images\ERD.png)
+![ERD for database](_07_images\ERD.png)
 
-**Outcomes from Milestone 4 (Querying the data):** Milestone 4 continues from Milestone 3. Now the schema for the database and all the sales data is in one location. Now queries can bve run against the up-to-date metrics from the data. Now you can make more data-driven decisions and get a better understanding of its sales. The following are a few business questions that were answered via extracting the data from the database using SQLTools in VS Code. To see all the questions given that were answered, refer to the appendix.
+
+**Outcomes from Milestone 4 (Querying the data):** Milestone 4 continues from Milestone 3. Now the schema for the database and all the sales_data is in one location. Queries were be run against this for data-driven decisions and to get a better understanding of its sales. Below is an example of a question together with its answer. For all the questions tackled, refer to the appendix 'Milestone 4'.
 
 - Task 1: How man stores does the business have and in which countries?
 The Operations team would like to know which countries we currently operate in and which country now has the most stores. Perform a query on the database to get the information, it should return the following information:
@@ -74,124 +77,248 @@ ORDER BY
 	total_no_stores DESC;
 ```
 
- ![M4T1](images\M4T1.png)  
+ ![M4T1](_07_images\M4T1.png)  
+
+Overall this section focused on developing your skill over the understanding of SELECT, JOIN, GROUP BY, and aggregate functions. The ability to break down complex queries using subqueries and CTEs. Being able to aggregating data for insight. It developed competence in being able to manipulating data for meaningful insights. It allowed the ability to analyse trends and present findings visually. Familiarity was gained of the database schema structure which made for more efficient querying. It helped with problem solving skills in the capacity to interpret business needs and translate them into effective SQL queries. Overall these skills empower efficient querying and help to facilitating informed decision-making.
+
+# File structure of the project
+
+There are seven folders: 
+
+/classes contains:
+
+data_cleaning.py
+data_extraction.py
+database_utils.py
+/notebooks contains the work for Milestone 3 and Mileston 4
+
+milestone3.ipynb
+milestone4.ipynb
+/info contains .yaml credentials files. Make sure you rename the files with _DUMMY at the end with the correct details.
+
+api_key.json
+postgresdb_creds.yaml
+db_creds.yaml
+/temp contains any temporary files that are downloaded during the course of the project
+
+/images contains images of results from the database for Milestone 4. These are used in this README.md file
+
+/ the root folder contains this README.md file, a main.py file and the star_schema.sql file for Milestone 3.
+
+Installation instructions
+You need to have sqlalchemy, pyyaml, pandas, boto3 installed. Use pip install if you don't have these.
+
+You need to have a postgresql database set up, called "sales_data". The details for this should be in the postgresdb_cred.yaml file.
+
+db_creds.yaml:
+    RDS_HOST: data-handling-project-readonly.cq2e8zno855e.eu-west-1.rds.amazonaws.com
+    RDS_PASSWORD: \***\*\*\*\*\*\*\***
+    RDS_USER: **\*\***\*\***\*\***
+    RDS_DATABASE: postgres
+    RDS_PORT: 5432
+
+postgres_db_creds.yaml:
+    HOST: "127.0.0.1"
+    USER: "postgres"
+    PASSWORD: \***\*\*\*\*\***
+    DATABASE: "sales_data"
+    PORT: 
+    
+# Usage instructions
+From the main downloaded directory:
+
+python main.py
+Will run the data extraction, data cleaning and database creation.
+
+Then you can execute the star_schema.sql in pgadmin or vscode or whatever way you prefer to communicate with the postgres database. For more details on what is going on in this process, this can be found in the milestone3.ipynb file.
+
+For the SQL queries for the business case, this can be found in the milestone4.ipynb. The answers are also in the section above for Milestone 4.
 
 
 
 
 
 
-- Task 2: Which locations currently have the most stores?
-The business stakeholders would like to know which locations currently have the most stores.
-They would like to close some stores before opening more in other locations.
-Find out which locations have the most stores currently. The query should return the following:
-
-            | locality       | total_no_stores |
-            |----------------|-----------------|
-            | Chapletown     | 14              |
-            | Belper         | 13              |
-            | Bushley        | 12              |
-            | Exeter         | 11              |
-            | High Wycombe   | 10              |
-            | Arbroath       | 10              |
-            | Rutherglen     | 10              |
 
 
-- Task 3: Which months produced the largest amount of sales?
-Query the database to find out which months have produced the most sales. The query should return the following information:
 
-            | total_sales | month |
-            |-------------|-------|
-            | 673295.68   | 8     |
-            | 668041.45   | 1     |
-            | 657335.84   | 10    |
-            | 650321.43   | 5     |
-            | 645741.70   | 7     |
-            | 645463.00   | 3     |
+Installation instructions
+Usage instructions
+File structure of the project
+License information
 
 
-- Task 4: How many sales are coming from online?
-The company is looking to increase its online sales.
-They want to know how many sales are happening online vs offline.
-Calculate how many products were sold and the amount of sales made for online and offline purchases.
-You should get the following information:
-
-            | numbers_of_sales | product_quantity_count | location |
-            |------------------|------------------------|----------|
-            | 26957            | 107739                 | Web      |
-            | 93166            | 374047                 | Offline  |
 
 
-- Task 5: What eprcentage of sales come through each type of store?
-The sales team wants to know which of the different store types is generated the most revenue so they know where to focus.
-Find out the total and percentage of sales coming from each of the different store types.
-The query should return:
-
-            | store_type  | total_sales | percentage_total(%) |
-            |-------------|-------------|---------------------|
-            | Local       | 3440896.52  | 44.87               |
-            | Web portal  | 1726547.05  | 22.44               |
-            | Super Store | 1224293.65  | 15.63               |
-            | Mall Kiosk  | 698791.61   | 8.96                |
-            | Outlet      | 631804.81   | 8.10                |
 
 
-- Task 6: Which month in each year produced the highest cost of sales?
-The company stakeholders want assurances that the company has been doing well recently.
-Find which months in which years have had the most sales historically.
-The query should return the following information:
-
-            | total_sales | year | month |
-            |-------------|------|-------|
-            | 27936.77    | 1994 | 3     |
-            | 27356.14    | 2019 | 1     |
-            | 27091.67    | 2009 | 8     |
-            | 26679.98    | 1997 | 11    |
-            | 26310.97    | 2018 | 12    |
-            | 26277.72    | 2019 | 8     |
-            | 26236.67    | 2017 | 9     |
-            | 25798.12    | 2010 | 5     |
-            | 25648.29    | 1996 | 8     |
-            | 25614.54    | 2000 | 1     |
 
 
-- Task 7: What is our staff headcount?
-The operations team would like to know the overall staff numbers in each location around the world. Perform a query to determine the staff numbers in each of the countries the company sells in.
-The query should return the values:
-
-            | total_staff_numbers | country_code |
-            |---------------------|--------------|
-            | 13307               | GB           |
-            | 6123                | DE           |
-            | 1384                | US           |
 
 
-- Task 8: Which German store type is selling the most?
-The sales team is looking to expand their territory in Germany. Determine which type of store is generating the most sales in Germany.
-The query will return:
-
-            | total_sales | store_type  | country_code |
-            |-------------|-------------|--------------|
-            | 198373.57   | Outlet      | DE           |
-            | 247634.20   | Mall Kiosk  | DE           |
-            | 384625.03   | Super Store | DE           |
-            | 1109909.59  | Local       | DE           |
 
 
-- Task 9: How quickly is the company making sales?
-Sales would like the get an accurate metric for how quickly the company is making sales.
-Determine the average time taken between each sale grouped by year, the query should return the following information:
-
-            | year | actual_time_taken                                      |
-            |------|--------------------------------------------------------|
-            | 2013 | {"hours": 2, "minutes": 17, "seconds": 12, "millise... |
-            | 1993 | {"hours": 2, "minutes": 15, "seconds": 35, "millise... |
-            | 2002 | {"hours": 2, "minutes": 13, "seconds": 50, "millise... |
-            | 2022 | {"hours": 2, "minutes": 13, "seconds": 6,  "millise... |
-            | 2008 | {"hours": 2, "minutes": 13, "seconds": 2,  "millise... |
+    A description of the project: what it does, the aim of the project, and what you learned
+    Include here a brief description of the project, what technologies are used etc.
 
 
-Hint: You will need the SQL command LEAD.
+- Example below:
+
+```bash
+/bin/kafka-topics.sh --list --zookeeper 127.0.0.1:2181
+```
+
+- The above command is used to check whether the topic has been created successfully, once confirmed the API script is edited to send data to the created kafka topic. The docker container has an attached volume which allows editing of files to persist on the container. The result of this is below:
+
+```python
+"""Insert your code here"""
+```
+
+> Insert screenshot of what you have built working.
+
+## Milestone 3: Install the dependencies
+
+- Prerequisites for the task:
+1. File Permissions
+2. Command Line Basics Recap
+3. Package managers
+4. What is Python?
+5. pip
+6. conda
+7. Running terminal commands
+
+- Task 1: Create a new virtual environment. Create a conda environment and install the following libraries: opencv-python, tensorflow, and ipykernel. 
+Important: If you are on Ubuntu, the latest version of Tensorflow doens't work with the default version of Python. When creating the virtual environment, use Python 3.8 instead by running:
+conda create -n my_env python=3.8
+
+- Task 2: Create a new virtual environment - For Users who are on a Mac with an M1 Chip (support not given in this project)
+
+- Prerequisites for the task:
+1. File Permissions
+2. Command Line
+1. Editing Files in the Command Line
+2. Terminal Customisation
+3. Advanced Command Line Features
+
+- Task 3: Combine the installation of dependencies. Install ipykernel by running the following command: pip install ipykernel. Create a requirements.txt file by running the command: pip list > requirements.txt.
+
+- Prerequisites for the task:
+1. Running Python files from the terminal
+2. Setting up
+3. A tour of VSCode
+4. The VSCode integrated terminal
+5. Markdown
+6. Python files and Python Notebooks
+7. How (and how not) to run Python files from VSCode
+8. Exactly cloning a conda environment
+
+- Task 4: Check the model works. Run this file (https://aicore-files.s3.amazonaws.com/Foundations/Python_Programming/RPS-Template.py) just to check the model you downloaded is working as expected.
+
+- Prerequisites for the task:
+1. Google Colab
+2. Variables
+3. Comments
+4. Numbers
+5. Strings
+6. Booleans
+7. Listscals
+8. Dictionaries
+9. Tuples
+10. Sets
+11. Intro to Control Flow
+12. For Loops, Iteration and Control Flow Tricks
+13. Assertions
+14. Debugging
+15. Functions
+16. Error Handling with Control Flow
+- Task 5: Get familiar with the code. Knowledge of Tensorflow and Keras is outside the scope of this project. Both libraries are used to build deep learning models (neural networks), and you learn more about them via the Data Science or Machine Learning Engineering specialisations at AiCore. The variable predictions contains the output of the model, and each element in the output corresponds to the probability of the input image representing a particular class. For example, if the prediction has the output: [[0.8, 0.1, 0.05, 0.05]], there is an 80% chance that the input image shows rock, a 10% chance that it shows paper, a 5% chance that it shows scissors, and a 5% chance that it shows nothing. The prediction is a numpy array with one row and four columns. So first, you need to access the first row, and then get the index of the highest value in the row.
+
+- Outcomes from Milestone 3: Milestone 3 continues from Milestone 2. Creation of a virtual environment and installation of libraries (opencv-python, tensorflow, and ipykernel). Model is checked vs RPS-Template.py file.
+
+Model checked using template file in RSP_env.
+> [Title](RPS-Template.py)
+
+## Milestone 4: Create a Rock-Paper-Sissors game
+
+- Prerequisites for the task:
+1. Context Managers
+2. Comprehensions
+3. Defining Functions
+4. Imports
+- Task 1: Store the user's and the computer's choices. Create a file called manual_rps.py to play the game without the camera. Two functions are created: get_computer_choice and get_user_choice. The first will randomly pick an option between "Rock", "Paper", and "Scissors" and return the choice. The second function will ask the user for an input and return it.
+- Task 2: Figure out who won. The script now chooses a winner based on the classic rules of Rock-Paper-Scissors and wrap the code in a function called get_winner and return the winner. This function takes two arguments: computer_choice and user_choice. If the computer wins, the function should print "You lost", if the user wins, the function should print "You won!", and if it's a tie, the function should print "It is a tie!".
+- Task 3: Create a function to simulate the game. Wrap it all in one function called 'play' which tells you who has won at the end.
+- Task 4: Update your documentation. Add documentation to README file. Describe the code written in this milestone.
+- Task 5: Start documenting experience. Create/update README file, discuss test environment and the code written for the game. Upload files to the repository.
+- Task 6: Update the latest code changes to GitHub.
+
+- Outcomes from Milestone 4: Milestone 4 continues from Milestone 3. Created a script that simulates a Rock-Paper-Sissors game in which the code will run the 'play' function and ask for an input from the user to then compare your input with the computer's choice to show the winner. The code can be run and tested by:
+
+i.e. in the command line:
+a. git clone https://github.com/chemi5t/computer-vision-rock-paper-scissors.git
+b. cd to that directory
+c. python manual_rps.py
+
+RPS code written using VS Code and saved as manual_rps.py.
+> ![Alt text](MS4_print_screen_v3.jpg)
+
+GitHub updated.
+> ![Alt text](MS4_GH_print_screen_v3.jpg)
+
+## Milestone n
+
+- Continue this process for every milestone, making sure to display clear understanding of each task and the concepts behind them as well as understanding of the technologies used.
+
+- Also don't forget to include code snippets and screenshots of the system you are building, it gives proof as well as it being an easy way to evidence your experience!
+
+## Conclusions
+
+- Maybe write a conclusion to the project, what you understood about it and also how you would improve it or take it further.
+
+- Read through your documentation, do you understand everything you've written? Is everything clear and cohesive?
+
+
+Project Title
+Table of Contents, if the README file is long
+A description of the project: what it does, the aim of the project, and what you learned
+Installation instructions
+Usage instructions
+File structure of the project
+License information
+
+## This is an H2 heading
+[this is a hyperlink](https://www.google.com)
+
+- This
+- Is
+- A
+- Bulletpoint 
+- List
+
+1. This 
+2. Is 
+3. A
+4. Numbered
+5. List 
+
+### This is an H3 Heading
+
+This is how you add an image:
+![image info](/pictures/image.png)
+
+You can also use any HTML you want in a Markdown file:
+<br>
+<p align=center><img src=images/example_image.png width=900></p>
+<br>
+
+
+- Answer some of these questions in the next few bullet points. What have you built? What technologies have you used? Why have you used those?
+- Example: The FastAPI framework allows for fast and easy construction of APIs and is combined with pydantic, which is used to assert the data types of all incoming data to allow for easier processing later on. The server is ran locally using uvicorn, a library for ASGI server implementation.
+```python
+"""Insert your code here"""
+```
+> Insert an image/screenshot of what you have built so far here.
+
 
 
 # Appendix
@@ -367,19 +494,15 @@ Return the number of stores: https://*private*.execute-api.eu-west-1.amazonaws.c
         Create a method in your DataExtractor class called list_number_of_stores which returns the number of stores to extract. 
         It should take in the number of stores endpoint and header dictionary as an argument.
 
-
         Step 2:
         Now that you know how many stores need to be extracted from the API.
-
 
         Step 3:
         Create another method retrieve_stores_data which will take the retrieve a store endpoint as an argument and extracts all the 
         stores from the API saving them in a pandas DataFrame.
 
-
         Step 4:
         Create a method in the DataCleaning class called_clean_store_data which cleans the data retrieve from the API and returns a pandas DataFrame.
-
 
         Step 5:
         Upload your DataFrame to the database using the upload_to_db method storing it in the table dim_store_details.
@@ -617,7 +740,7 @@ Changes were made to the dim_products table via SQL; removal of '£' from the va
 Primary keys were added to dimension (dim) tables, establishing the foundation for the star-based schema. Foreign keys were created in the orders_table to reference primary keys in other dimension tables, completing the star-based schema. Latest code changes, including schema modifications, were pushed to the GitHub repository, and the README file was updated to reflect the project's progress and structure.
 
 **Entity-Relationship Diagram (ERD) for the 'sales_data' database in 'pgAdmin 4'.**
-![ERD for database](images\ERD.png)
+![ERD for database](_07_images\ERD.png)
 
 ## Milestone 4: Querying the data
 
@@ -658,7 +781,7 @@ Your boss is excited that you now have the schema for the database and all the s
         total_no_stores DESC;
     ```
 
-    ![M4T1](images\M4T1.png)  
+    ![M4T1](_07_images\M4T1.png)  
 
 - **Task 2: Which locations currently have the most stores?**
 
@@ -692,7 +815,7 @@ Your boss is excited that you now have the schema for the database and all the s
     LIMIT 7;
     ```
 
-     ![M4T2](images\M4T2.png)  
+     ![M4T2](_07_images\M4T2.png)  
 
 - **Task 3: Which months produced the largest amount of sales?**
 
@@ -730,7 +853,7 @@ Your boss is excited that you now have the schema for the database and all the s
     LIMIT 
         6;
     ```
-     ![M4T3](images\M4T3.png)  
+     ![M4T3](_07_images\M4T3.png)  
 
 
 - **Task 4: How many sales are coming from online?**
@@ -761,11 +884,11 @@ Your boss is excited that you now have the schema for the database and all the s
         location
     ORDER BY number_of_sales ASC;
     ```
-     ![M4T4](images\M4T4.png)  
+     ![M4T4](_07_images\M4T4.png)  
 
 - **Task 5: What eprcentage of sales come through each type of store?**
 
-     sales team wants to know which of the different store types is generated the most revenue so they know where to focus. Find out the total and percentage of sales coming from each of the different store types. The query should return:
+     The sales team wants to know which of the different store types are generating the most revenue so they know where to focus. Find out the total and percentage of sales coming from each of the different store types. The query should return:
 
             | store_type  | total_sales | percentage_total(%) |
             |-------------|-------------|---------------------|
@@ -775,7 +898,7 @@ Your boss is excited that you now have the schema for the database and all the s
             | Mall Kiosk  | 698791.61   | 8.96                |
             | Outlet      | 631804.81   | 8.10                |
 
-    Below was the searched query showing a match with the table above showing the amount of sales made online versus offline, helping assess the performance of online sales channels.
+    Below was the searched query showing a match with the table above showing the total sales and percentage contribution from the various store types, aiding in the focus of sales strategies.
 
     ```sql
     -- Task 5. What percentage of sales come through each type of store?
@@ -801,10 +924,11 @@ Your boss is excited that you now have the schema for the database and all the s
     ```
      ![M4T5](images\M4T5.png)  
 
-- Task 6: Which month in each year produced the highest cost of sales?
-The company stakeholders want assurances that the company has been doing well recently.
-Find which months in which years have had the most sales historically.
-The query should return the following information:
+- **Note: The question below was asked in two different ways. For clarity I have reframed them into two parts. The difference being one looks at which month in the year whilst the other months.**
+- **Task 6a: Which month in each year produced the highest cost of sales?**
+- **Task 6b: Which months in each year produced the highest cost of sales?**
+
+     The company stakeholders want assurances that the company has been doing well recently. Find which **months** in which years have had the most sales historically. The query should return the following information for **Task 6b.**, Table 6b:
 
             | total_sales | year | month |
             |-------------|------|-------|
@@ -819,10 +943,63 @@ The query should return the following information:
             | 25648.29    | 1996 | 8     |
             | 25614.54    | 2000 | 1     |
 
+            **Table 6b:**
 
-- Task 7: What is our staff headcount?
-The operations team would like to know the overall staff numbers in each location around the world. Perform a query to determine the staff numbers in each of the countries the company sells in.
-The query should return the values:
+    Below was the searched query showing a match with the table above showing the **months** in each year with the highest cost of sales, providing insights into sales performance.
+
+    ```sql
+    -- Task 6b. Which months in each year produced the highest cost of sales?
+    SELECT
+        ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales,
+        ddt.year,
+        ddt.month
+    FROM dim_date_times AS ddt
+    JOIN orders_table AS ot
+    ON ddt.date_uuid = ot.date_uuid
+    JOIN dim_products AS dp
+    ON ot.product_code = dp.product_code
+    GROUP BY 
+        ddt.year,
+        ddt.month
+    ORDER BY total_sales DESC
+    LIMIT 10;
+    ```
+     ![M4T6b](_07_images\M4T6b.png)  
+
+     Below was the searched query showing the **month** in each year with the highest cost of sales, giving a slightly differnt look.
+
+    ```sql
+    -- Task 6a. Which month in each year produced the highest cost of sales?
+    WITH monthly_sales AS (
+        SELECT
+            ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales,
+            ddt.year,
+            ddt.month,
+            ROW_NUMBER() OVER (PARTITION BY ddt.year ORDER BY SUM(ot.product_quantity * dp."product_price_(gbp)") DESC) AS month_rank
+        FROM dim_date_times AS ddt
+        JOIN orders_table AS ot ON ddt.date_uuid = ot.date_uuid
+        JOIN dim_products AS dp ON ot.product_code = dp.product_code
+        GROUP BY 
+            ddt.year,
+            ddt.month
+    )
+    SELECT
+        ms.total_sales,
+        ms.year,
+        ms.month
+    FROM
+        monthly_sales AS ms
+    WHERE
+        month_rank = 1
+    ORDER BY
+        total_sales DESC
+    LIMIT 10;
+    ```
+     ![M4T6a](_07_images\M4T6a.png)  
+
+- **Task 7: What is our staff headcount?**
+
+    The operations team would like to know the overall staff numbers in each location around the world. Perform a query to determine the staff numbers in each of the countries the company sells in. The query should return the values:
 
             | total_staff_numbers | country_code |
             |---------------------|--------------|
@@ -830,10 +1007,25 @@ The query should return the values:
             | 6123                | DE           |
             | 1384                | US           |
 
+    Below was the searched query showing a match with the table above showing the overall staff numbers in each country where the company operates, enabling workforce management.
 
-- Task 8: Which German store type is selling the most?
-The sales team is looking to expand their territory in Germany. Determine which type of store is generating the most sales in Germany.
-The query will return:
+    ```sql
+    -- Task 7. What is our staff headcount?
+    SELECT 
+        SUM(staff_numbers) AS total_staff_numbers,
+        country_code
+    FROM 
+        dim_store_details
+    GROUP BY
+        country_code
+    ORDER BY 
+        total_staff_numbers DESC;
+    ```
+     ![M4T7](_07_images\M4T7.png)  
+
+- **Task 8: Which German store type is selling the most?**
+
+    The sales team is looking to expand their territory in Germany. Determine which type of store is generating the most sales in Germany. The query will return:
 
             | total_sales | store_type  | country_code |
             |-------------|-------------|--------------|
@@ -841,11 +1033,38 @@ The query will return:
             | 247634.20   | Mall Kiosk  | DE           |
             | 384625.03   | Super Store | DE           |
             | 1109909.59  | Local       | DE           |
+        
+    Below was the searched query showing a match with the table above showing the store type generating the most sales in Germany, helping with which type of store for expansion.
 
+    ```sql
+    -- Task 8. Which German store type is selling the most?
+    SELECT
+        ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales,
+        dsd.store_type,
+        dsd.country_code
+    FROM 
+        dim_store_details AS dsd
+    JOIN
+        orders_table AS ot
+    ON
+        dsd.store_code =  ot.store_code
+    JOIN 
+        dim_products AS dp
+    ON
+        ot.product_code = dp.product_code
+    WHERE
+        dsd.country_code = 'DE'
+    GROUP BY
+        dsd.store_type, dsd.country_code
+    ORDER BY
+        total_sales 
+    LIMIT 10;
+    ```
+     ![M4T8](_07_images\M4T8.png)  
 
-- Task 9: How quickly is the company making sales?
-Sales would like the get an accurate metric for how quickly the company is making sales.
-Determine the average time taken between each sale grouped by year, the query should return the following information:
+- **Task 9: How quickly is the company making sales?**
+
+    Sales would like the get an accurate metric for how quickly the company is making sales. Determine the average time taken between each sale grouped by year, the query should return the following information:
 
             | year | actual_time_taken                                      |
             |------|--------------------------------------------------------|
@@ -855,199 +1074,24 @@ Determine the average time taken between each sale grouped by year, the query sh
             | 2022 | {"hours": 2, "minutes": 13, "seconds": 6,  "millise... |
             | 2008 | {"hours": 2, "minutes": 13, "seconds": 2,  "millise... |
 
+    Hint: You will need the SQL command LEAD.
 
-Hint: You will need the SQL command LEAD.
+    Below was the searched query showing a match with the table above showing average time taken between sales grouped by year, showing sales efficiency over time.
 
-- Task 10: Update the latest code changes to GitHub.
+    ```sql
+    -- Task 9: How quickly is the company making sales?
+    -- work in progress
+    SELECT ddt.year, ROUND(8760/COUNT(ddt.year)::numeric, 4) AS average_time_between_sales_in_a_year
+    FROM orders_table AS ot
+    JOIN dim_date_times AS ddt
+    ON ot.date_uuid = ddt.date_uuid
+    GROUP BY ddt.year
+    ORDER BY average_time_between_sales_in_a_year DESC;
+    ```
+    ** ![M4T8](_07_images\M4T8.png)  **
 
+- **Task 10: Update the latest code changes to GitHub.**
 
+**Outcomes from Milestone 4:** Milestone 4 continues from Milestone 3. Now the schema for the database and all the sales_data is in one location. Queries were be run against this for data-driven decisions and to get a better understanding of its sales. 
 
-
-Task 5: Analyzed the total sales and percentage contribution from different store types, guiding the focus of sales strategies.
-Task 6: Identified the months in each year with the highest cost of sales, providing historical insights into sales performance.
-Task 7: Determined the overall staff numbers in each country where the company operates, facilitating workforce management.
-Task 8: Identified the store type generating the most sales in Germany, assisting in strategic decisions regarding store expansion.
-Task 9: Calculated the average time taken between sales grouped by year, providing insights into sales efficiency over time.
-Task 10: Updated the latest code changes to GitHub, ensuring the project repository reflects the most recent updates and progress.
-
-
-
-**Outcomes from Milestone 4:** Prerequisites and setup of laptop and GitHub up successful. Now able to commence the project and save/track changes via Git and GitHub. Visual Studio Code to be used for writing the code.
-
-
-Installation instructions
-Usage instructions
-File structure of the project
-License information
-
-
-
-
-
-
-
-
-
-
-
-
-    A description of the project: what it does, the aim of the project, and what you learned
-    Include here a brief description of the project, what technologies are used etc.
-
-
-- Example below:
-
-```bash
-/bin/kafka-topics.sh --list --zookeeper 127.0.0.1:2181
-```
-
-- The above command is used to check whether the topic has been created successfully, once confirmed the API script is edited to send data to the created kafka topic. The docker container has an attached volume which allows editing of files to persist on the container. The result of this is below:
-
-```python
-"""Insert your code here"""
-```
-
-> Insert screenshot of what you have built working.
-
-## Milestone 3: Install the dependencies
-
-- Prerequisites for the task:
-1. File Permissions
-2. Command Line Basics Recap
-3. Package managers
-4. What is Python?
-5. pip
-6. conda
-7. Running terminal commands
-
-- Task 1: Create a new virtual environment. Create a conda environment and install the following libraries: opencv-python, tensorflow, and ipykernel. 
-Important: If you are on Ubuntu, the latest version of Tensorflow doens't work with the default version of Python. When creating the virtual environment, use Python 3.8 instead by running:
-conda create -n my_env python=3.8
-
-- Task 2: Create a new virtual environment - For Users who are on a Mac with an M1 Chip (support not given in this project)
-
-- Prerequisites for the task:
-1. File Permissions
-2. Command Line
-1. Editing Files in the Command Line
-2. Terminal Customisation
-3. Advanced Command Line Features
-
-- Task 3: Combine the installation of dependencies. Install ipykernel by running the following command: pip install ipykernel. Create a requirements.txt file by running the command: pip list > requirements.txt.
-
-- Prerequisites for the task:
-1. Running Python files from the terminal
-2. Setting up
-3. A tour of VSCode
-4. The VSCode integrated terminal
-5. Markdown
-6. Python files and Python Notebooks
-7. How (and how not) to run Python files from VSCode
-8. Exactly cloning a conda environment
-
-- Task 4: Check the model works. Run this file (https://aicore-files.s3.amazonaws.com/Foundations/Python_Programming/RPS-Template.py) just to check the model you downloaded is working as expected.
-
-- Prerequisites for the task:
-1. Google Colab
-2. Variables
-3. Comments
-4. Numbers
-5. Strings
-6. Booleans
-7. Listscals
-8. Dictionaries
-9. Tuples
-10. Sets
-11. Intro to Control Flow
-12. For Loops, Iteration and Control Flow Tricks
-13. Assertions
-14. Debugging
-15. Functions
-16. Error Handling with Control Flow
-- Task 5: Get familiar with the code. Knowledge of Tensorflow and Keras is outside the scope of this project. Both libraries are used to build deep learning models (neural networks), and you learn more about them via the Data Science or Machine Learning Engineering specialisations at AiCore. The variable predictions contains the output of the model, and each element in the output corresponds to the probability of the input image representing a particular class. For example, if the prediction has the output: [[0.8, 0.1, 0.05, 0.05]], there is an 80% chance that the input image shows rock, a 10% chance that it shows paper, a 5% chance that it shows scissors, and a 5% chance that it shows nothing. The prediction is a numpy array with one row and four columns. So first, you need to access the first row, and then get the index of the highest value in the row.
-
-- Outcomes from Milestone 3: Milestone 3 continues from Milestone 2. Creation of a virtual environment and installation of libraries (opencv-python, tensorflow, and ipykernel). Model is checked vs RPS-Template.py file.
-
-Model checked using template file in RSP_env.
-> [Title](RPS-Template.py)
-
-## Milestone 4: Create a Rock-Paper-Sissors game
-
-- Prerequisites for the task:
-1. Context Managers
-2. Comprehensions
-3. Defining Functions
-4. Imports
-- Task 1: Store the user's and the computer's choices. Create a file called manual_rps.py to play the game without the camera. Two functions are created: get_computer_choice and get_user_choice. The first will randomly pick an option between "Rock", "Paper", and "Scissors" and return the choice. The second function will ask the user for an input and return it.
-- Task 2: Figure out who won. The script now chooses a winner based on the classic rules of Rock-Paper-Scissors and wrap the code in a function called get_winner and return the winner. This function takes two arguments: computer_choice and user_choice. If the computer wins, the function should print "You lost", if the user wins, the function should print "You won!", and if it's a tie, the function should print "It is a tie!".
-- Task 3: Create a function to simulate the game. Wrap it all in one function called 'play' which tells you who has won at the end.
-- Task 4: Update your documentation. Add documentation to README file. Describe the code written in this milestone.
-- Task 5: Start documenting experience. Create/update README file, discuss test environment and the code written for the game. Upload files to the repository.
-- Task 6: Update the latest code changes to GitHub.
-
-- Outcomes from Milestone 4: Milestone 4 continues from Milestone 3. Created a script that simulates a Rock-Paper-Sissors game in which the code will run the 'play' function and ask for an input from the user to then compare your input with the computer's choice to show the winner. The code can be run and tested by:
-
-i.e. in the command line:
-a. git clone https://github.com/chemi5t/computer-vision-rock-paper-scissors.git
-b. cd to that directory
-c. python manual_rps.py
-
-RPS code written using VS Code and saved as manual_rps.py.
-> ![Alt text](MS4_print_screen_v3.jpg)
-
-GitHub updated.
-> ![Alt text](MS4_GH_print_screen_v3.jpg)
-
-## Milestone n
-
-- Continue this process for every milestone, making sure to display clear understanding of each task and the concepts behind them as well as understanding of the technologies used.
-
-- Also don't forget to include code snippets and screenshots of the system you are building, it gives proof as well as it being an easy way to evidence your experience!
-
-## Conclusions
-
-- Maybe write a conclusion to the project, what you understood about it and also how you would improve it or take it further.
-
-- Read through your documentation, do you understand everything you've written? Is everything clear and cohesive?
-
-
-Project Title
-Table of Contents, if the README file is long
-A description of the project: what it does, the aim of the project, and what you learned
-Installation instructions
-Usage instructions
-File structure of the project
-License information
-
-## This is an H2 heading
-[this is a hyperlink](https://www.google.com)
-
-- This
-- Is
-- A
-- Bulletpoint 
-- List
-
-1. This 
-2. Is 
-3. A
-4. Numbered
-5. List 
-
-### This is an H3 Heading
-
-This is how you add an image:
-![image info](/pictures/image.png)
-
-You can also use any HTML you want in a Markdown file:
-<br>
-<p align=center><img src=images/example_image.png width=900></p>
-<br>
-
-
-- Answer some of these questions in the next few bullet points. What have you built? What technologies have you used? Why have you used those?
-- Example: The FastAPI framework allows for fast and easy construction of APIs and is combined with pydantic, which is used to assert the data types of all incoming data to allow for easier processing later on. The server is ran locally using uvicorn, a library for ASGI server implementation.
-```python
-"""Insert your code here"""
-```
-> Insert an image/screenshot of what you have built so far here.
+Overall this section focused on developing your skill over the understanding of SELECT, JOIN, GROUP BY, and aggregate functions. The ability to break down complex queries using subqueries and CTEs. Being able to aggregating data for insight. It developed competence in being able to manipulating data for meaningful insights. It allowed the ability to analyse trends and present findings visually. Familiarity was gained of the database schema structure which made for more efficient querying. It helped with problem solving skills in the capacity to interpret business needs and translate them into effective SQL queries. Overall these skills empower efficient querying and help to facilitating informed decision-making.

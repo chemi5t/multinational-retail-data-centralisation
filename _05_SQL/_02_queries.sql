@@ -42,15 +42,24 @@ ORDER BY
 LIMIT 7;
 
 -- Task 3. Which months produced the largest amount of sales
-SELECT ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales, ddt.month
-FROM dim_products AS dp
-JOIN orders_table AS ot
-ON dp.product_code = ot.product_code
-JOIN dim_date_times AS ddt 
-ON ot.date_uuid = ddt.date_uuid
-GROUP BY ddt.month
-ORDER BY total_sales DESC
-LIMIT 6;
+SELECT 
+	ROUND(SUM(ot.product_quantity * dp."product_price_(gbp)")::numeric, 2) AS total_sales, ddt.month
+FROM 
+	dim_products AS dp
+JOIN 
+	orders_table AS ot
+ON 
+	dp.product_code = ot.product_code
+JOIN 
+	dim_date_times AS ddt 
+ON 
+	ot.date_uuid = ddt.date_uuid
+GROUP BY 
+	ddt.month
+ORDER BY 
+	total_sales DESC
+LIMIT 
+	6;
 
 -- Task 4. How many sales are coming from online? 
 SELECT

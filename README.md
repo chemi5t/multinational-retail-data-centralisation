@@ -3,7 +3,36 @@
 # Table of Contents
 
 # A description of the project
-The Multinational Retail Data Centralisation Project aims to address the challenge of their sales data being spread across many different data sources. This hinders accessibility and analysis of the data. The project's primary objective is to establish a centralised database system that consolidates all sales data into a single location. This centralised repository will serve as the primary source of truth for sales data, enabling easy access and analysis for team members. The project will involve storing existing sales data in the database and developing querying mechanisms to generate up-to-date metrics for business analysis and decision-making.
+The Multinational Retail Data Centralisation (MRDC) Project aims to address the challenge of their sales data being spread across many different data sources (AWS RSD, AWS S3 and API) and formats(pdf, csv and json). This hinders accessibility and analysis of the data. The project's primary objective is to establish a centralised database system that consolidates all sales data into a single location together with a star_based schema. This centralised repository will serve as the primary source of truth for sales data, enabling easy access and analysis for team members. The project will involve storing up-to-date sales data in the database and developing a querying mechanisms to generate the latest metrics for business analysis and decision-making.
+
+In the \root (multinational-retail-data-centralisation) folder, the main.py runs the Extract, Transform and Load (ETL) process. The code has been written such that it has been broken down into methods. 
+
+Snippet from the multinational-retail-data-centralisation\main.py
+
+```python
+if __name__ == "__main__":
+    print("######################################## 1. ETL of Legacy Users ########################################")
+    one_etl_leagacy_users()
+
+    print("######################################## 2. ETL of Card Details ########################################")
+    two_etl_card_details()
+
+    print("######################################## 3. ETL of Store Details ########################################")
+    three_etl_store_details()
+
+    print("######################################## 4. ETL of Product Details ########################################")
+    four_etl_product_details()
+
+    print("######################################## 5. ETL of Orders Details ########################################")
+    five_etl_orders_details()
+
+    print("######################################## 6. ETL of Date Events ########################################")
+    six_etl_date_events()
+```
+
+Overall this script utilises the data_cleaning.py, data_extraction.py and database_utils.py files and imports the DataCleaning, DataExtractor and DatabaseConnector classes and uploads the clean data to the centralised database ('sales_data') in order to be able to complete the ETL pipeline.
+
+From the clean uploaded data, SQL was used to answer several buisness questions.
 
 # Project Milestones 1 to 4
 
@@ -47,10 +76,9 @@ Primary keys were added to dimension (dim) tables, establishing the foundation f
 **Entity-Relationship Diagram (ERD) for the 'sales_data' database in 'pgAdmin 4'.**
 ![ERD for database](_07_images\ERD.png)
 
-
 **Outcomes from Milestone 4 (Querying the data):** Milestone 4 continues from Milestone 3. Now the schema for the database and all the sales_data is in one location. Queries were be run against this for data-driven decisions and to get a better understanding of its sales. Below is an example of a question together with its answer. For all the questions tackled, refer to the appendix 'Milestone 4'.
 
-- Task 1: How man stores does the business have and in which countries?
+- Task 1: How many stores does the business have and in which countries?
 The Operations team would like to know which countries we currently operate in and which country now has the most stores. Perform a query on the database to get the information, it should return the following information:
 
             | country | total_no_stores |       
@@ -63,7 +91,7 @@ The Operations team would like to know which countries we currently operate in a
 
  Below was the searched query showing a match with the table above showing the total number of stores in each country where the business operates. This provided insight into the geographical distribution of the stores.
 
-```python
+```sql
 -- Task 1. How many stores does the business have and in which countries?
 SELECT 
 	country_code as country, 
@@ -81,11 +109,52 @@ ORDER BY
 
 Overall this section focused on developing your skill over the understanding of SELECT, JOIN, GROUP BY, and aggregate functions. The ability to break down complex queries using subqueries and CTEs. Being able to aggregating data for insight. It developed competence in being able to manipulating data for meaningful insights. It allowed the ability to analyse trends and present findings visually. Familiarity was gained of the database schema structure which made for more efficient querying. It helped with problem solving skills in the capacity to interpret business needs and translate them into effective SQL queries. Overall these skills empower efficient querying and help to facilitating informed decision-making.
 
+# Installation instructions
+
+From the main/root directory of the project folder, follow these steps:
+
+1. In the command line:
+    ```bash
+    git clone https://github.com/chemi5t/multinational-retail-data-centralisation.git
+    ```
+2. Set up a virtual environment for the project:
+    ```bash
+    conda create --name mrdc_env
+    ```
+    ```bash
+    conda activate mrdc_env
+    ```
+    ```bash
+    pip install -r requirements.txt
+    ```
+    - Packages of note:
+        - pip install boto3==1.34.21 
+        - nbformat==5.9.2 
+        - numpy==1.26.2 
+        - pandas==2.1.3 
+        - python-dateutil==2.8.2 
+        - python-decouple==3.8 
+        - PyYAML==6.0.1 
+        - requests==2.31.0 
+        - SQLAlchemy==2.0.23 
+        - tabula-py==2.9.0
+3. Set up a PostgreSQL database named "sales_data" using a client of your choice i.e. pgAdmin 4.
+4. Save your database credentials to db_creds.yaml for security and to enable data extraction from various sources. Detailed instructions on setting up the database and configuring credentials can be found in Milestone 2.
+
+# Usage instructions
+
+1. Run the main.py to execute the data extraction, cleaning, and database creation processes in the root folder via the terminal in VS Code.
+    ```bash
+    python main.py
+    ```
+2. Execute _05_SQL\_01_star_schema_sales_data.sql script via pgAdmin 4 or SQLTools in VS Code; or any other tool you prefer for interacting with PostgreSQL. This sets up the star-schema in the "sales_data" database. ERD can be found in milestone 3.
+4. Similarly run  _05_SQL\_02_queries.sql which answers questions posed by the business by querying the 'sales_data' database. 
+
 # File structure of the project
 
-There are seven folders and the root folder: 
+There are seven folders within the /root folder: 
 
-- /_01_raw_tables_csv 
+- /_01_raw_tables_csv - *Raw untouched tables extracted via main.py and saved as .csv*
     - card_details.csv
     - date_details.csv
     - legacy_users.csv
@@ -93,7 +162,7 @@ There are seven folders and the root folder:
     - products_details.csv
     - store_details.csv
 
-- /_02_manipulate_raw_tables_ipynb 
+- /_02_manipulate_raw_tables_ipynb - *Raw untouch tables extracted via mian.py and ready to be checked for cleaning*
     - card_details.ipynb
     - date_details.ipynb
     - legacy_users.ipynb
@@ -101,7 +170,7 @@ There are seven folders and the root folder:
     - products_details.ipynb
     - store_details.ipynb
 
-- /_03_cleaned_tables_csv 
+- /_03_cleaned_tables_csv - *Cleaned tables saved as .csv and uploaded to database automatically via main.py*
     - card_details_data_cleaned.csv
     - date_details_data_cleaned.csv
     - legacy_users_data_cleaned.csv
@@ -109,7 +178,7 @@ There are seven folders and the root folder:
     - products_details_data_cleaned.csv
     - store_details_data_cleaned.csv
 
-- /_04_cleaned_tables_ipynb 
+- /_04_cleaned_tables_ipynb - *Files updated from folder /_02*. Tables cleaning logic saved *_data_cleaned.ipynb.*
     - card_details_data_cleaned.ipynb
     - date_details_data_cleaned.ipynb
     - legacy_users_data_cleaned.ipynb
@@ -117,20 +186,27 @@ There are seven folders and the root folder:
     - products_details_data_cleaned.ipynb
     - store_details_data_cleaned.ipynb
 
-- /_05_SQL
+- /_05_SQL - *After running main.py the following .sql files set up the star-schema, provide answers to business questions and allowes the removal of dependencies when starting over with re building the database*
     - _01_star_schema_sales_data.sql
     - _02_queries.sql
     - _03_drop_table_query.sql
 
-- /_06_multinational_retail_data_centralisation
+- /_06_multinational_retail_data_centralisation - *.py files required by main.py to operate*
     - data_cleaning.py
     - data_extraction.py
     - database_utils.py
 
-- /_07_images 
+- /_07_images - *Picture files used in the README.md*
     - Contains image files
 
-- /root
+- /root - *This folder has all the folders seen above as well as containing the .env files which points to the stored private credentials.  *.yaml, *.env, and  __pycache__/ have been added to .gitignore. Environment details saved to requirements.txt, pip_requirements.txt and conda_requirements.txt. README.md will also cover all aspects how the project was conducted over 4 milestones.* 
+    - /_01_raw_tables_csv 
+    - /_02_manipulate_raw_tables_ipynb
+    - /_03_cleaned_tables_csv
+    - /_04_cleaned_tables_ipynb
+    - /_05_SQL
+    - /_06_multinational_retail_data_centralisation
+    - /_07_images 
     - .env
     - .gitignore
     - conda_requirements.txt
@@ -140,55 +216,13 @@ There are seven folders and the root folder:
     - README.md
     - requirements.txt
 
+Screen shot of EXPLORER from VS Code containing the above contents:
 
-    
+![VSC1](_07_images\VSC1.png) 
 
-data_cleaning.py
-data_extraction.py
-database_utils.py
-/notebooks contains the work for Milestone 3 and Mileston 4
+# License information
+ 
 
-milestone3.ipynb
-milestone4.ipynb
-/info contains .yaml credentials files. Make sure you rename the files with _DUMMY at the end with the correct details.
-
-api_key.json
-postgresdb_creds.yaml
-db_creds.yaml
-/temp contains any temporary files that are downloaded during the course of the project
-
-/images contains images of results from the database for Milestone 4. These are used in this README.md file
-
-/ the root folder contains this README.md file, a main.py file and the star_schema.sql file for Milestone 3.
-
-Installation instructions
-You need to have sqlalchemy, pyyaml, pandas, boto3 installed. Use pip install if you don't have these.
-
-You need to have a postgresql database set up, called "sales_data". The details for this should be in the postgresdb_cred.yaml file.
-
-db_creds.yaml:
-    RDS_HOST: data-handling-project-readonly.cq2e8zno855e.eu-west-1.rds.amazonaws.com
-    RDS_PASSWORD: \***\*\*\*\*\*\*\***
-    RDS_USER: **\*\***\*\***\*\***
-    RDS_DATABASE: postgres
-    RDS_PORT: 5432
-
-postgres_db_creds.yaml:
-    HOST: "127.0.0.1"
-    USER: "postgres"
-    PASSWORD: \***\*\*\*\*\***
-    DATABASE: "sales_data"
-    PORT: 
-    
-# Usage instructions
-From the main downloaded directory:
-
-python main.py
-Will run the data extraction, data cleaning and database creation.
-
-Then you can execute the star_schema.sql in pgadmin or vscode or whatever way you prefer to communicate with the postgres database. For more details on what is going on in this process, this can be found in the milestone3.ipynb file.
-
-For the SQL queries for the business case, this can be found in the milestone4.ipynb. The answers are also in the section above for Milestone 4.
 
 
 
@@ -593,8 +627,7 @@ Return the number of stores: https://*private*.execute-api.eu-west-1.amazonaws.c
 - Task 7: Retrieve and clean the orders table. This table which acts as the single source of truth for all orders the company has made in the past is stored in a database on AWS RDS.
 
         Step 1:
-        Using the database table listing methods you created earlier list_db_tables, list all the tables in the database to get the name of the table containing all information about 
-        the product orders.
+        Using the database table listing methods you created earlier list_db_tables, list all the tables in the database to get the name of the table containing all information about the product orders.
 
         Step 2:
         Extract the orders data using the read_rds_table method you create earlier returning a pandas DataFrame.
@@ -639,6 +672,17 @@ You don't have to write all of this at once, but make sure to update your README
     - Avoid import *: Import only the specific methods or classes needed from a module to enhance code clarity and prevent naming conflicts
     - Consistent Docstrings: Provide clear and consistent docstrings for all methods, explaining their purpose, parameters, and return values. This aids code understanding for other developers.
     - Type Annotations: Consider adding type annotations to method signatures, variables, and return values to improve code maintainability and catch type-related errors during development
+    - Create a requirements.txt file by running the command:
+    ```bash
+    pip list > requirements.txt
+    ```
+    or
+    ```bash
+    pip freeze > pip_requirements.txt
+    ```
+    and 
+    ```bash
+    conda list --export > conda_requirements.txt
 
 **Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):** Milestone 2 continues from Milestone 1. The company's current up-to-date data is stored in a database locally titled 'sales_data' in 'pgAdmin 4' so that it is accessed from one centralised location and acts as a single point of reference for sales data. Data has been extracted from various sources in JSON, CSV, and PDF formats hosted on different platforms. Data was cleaned using pandas and stored in a local PostgreSQL database, pgAdmin 4, using SQLAlchemy. Progress was updated to the repository on GitHub, and code reviewed for better maintainability and efficiency.
 
@@ -809,7 +853,7 @@ Your boss is excited that you now have the schema for the database and all the s
     4. CRUD Subquery Operations
     5. Common Table Expressions (CTEs)
 
-- **Task 1: How man stores does the business have and in which countries?**
+- **Task 1: How many stores does the business have and in which countries?**
 
     The Operations team would like to know which countries we currently operate in and which country now has the most stores. Perform a query on the database to get the information, it should return the following information:
 

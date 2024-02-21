@@ -86,7 +86,7 @@ def setup_and_extract_data(cred_path: str, table_index: int = 2): # Step 1: Spec
 
     return selected_table_df, selected_table, engine2
 
-def one_etl_leagacy_users():
+def one_etl_legacy_users():
     """
     The one_etl_leagacy_users function extracts, transforms, and loads data for legacy users.
     It first sets up the database connection and extracts the specified table's data as a DataFrame.
@@ -254,7 +254,7 @@ def six_etl_date_events():
     
 if __name__ == "__main__":
     print("######################################## 1. ETL of Legacy Users ########################################")
-    one_etl_leagacy_users()
+    one_etl_legacy_users()
 
     print("######################################## 2. ETL of Card Details ########################################")
     two_etl_card_details()

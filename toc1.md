@@ -1,0 +1,27 @@
+<!-- TOC -->
+
+- [Multinational Retail Data Centralisation](#multinational-retail-data-centralisation)
+- [Table of Contents](#table-of-contents)
+- [A description of the project](#a-description-of-the-project)
+- [Project Milestones - Summary](#project-milestones---summary)
+    - [**Outcomes from Milestone 1 (Setting up the environment):**](#outcomes-from-milestone-1-setting-up-the-environment)
+    - [**Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):**](#outcomes-from-milestone-2-extracting-and-cleaning-the-data-from-the-data-sources)
+    - [**Outcomes from Milestone 3 (Creating the database schema):**](#outcomes-from-milestone-3-creating-the-database-schema)
+    - [**Outcomes from Milestone 4 (Querying the data):**](#outcomes-from-milestone-4-querying-the-data)
+- [Installation instructions](#installation-instructions)
+- [Usage instructions](#usage-instructions)
+- [File structure of the project](#file-structure-of-the-project)
+- [Languages](#languages)
+- [License information](#license-information)
+- [Appendix](#appendix)
+- [Project Milestones](#project-milestones)
+    - [Milestone 1: Environment set up](#milestone-1-environment-set-up)
+    - [**Outcomes from Milestone 1 (Setting up the environment):**](#outcomes-from-milestone-1-setting-up-the-environment-1)
+    - [Milestone 2: Extract and clean the data from the data sources](#milestone-2-extract-and-clean-the-data-from-the-data-sources)
+    - [**Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):**](#outcomes-from-milestone-2-extracting-and-cleaning-the-data-from-the-data-sources-1)
+    - [Milestone 3: Create the database scheme](#milestone-3-create-the-database-scheme)
+    - [**Outcomes from Milestone 3 (Creating the database schema):**](#outcomes-from-milestone-3-creating-the-database-schema-1)
+    - [Milestone 4: Querying the data](#milestone-4-querying-the-data)
+    - [**Outcomes from Milestone 4 (Querying the data):**](#outcomes-from-milestone-4-querying-the-data-1)
+
+<!-- /TOC -->

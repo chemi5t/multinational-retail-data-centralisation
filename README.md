@@ -1,6 +1,27 @@
 # Multinational Retail Data Centralisation
 
 # Table of Contents
+- [A description of the project](#a-description-of-the-project)
+- [Project Milestones - Summary](#project-milestones---summary)
+    - [Outcomes from Milestone 1 (Setting up the environment):](#outcomes-from-milestone-1-setting-up-the-environment)
+    - [Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):](#outcomes-from-milestone-2-extracting-and-cleaning-the-data-from-the-data-sources)
+    - [Outcomes from Milestone 3 (Creating the database schema):](#outcomes-from-milestone-3-creating-the-database-schema)
+    - [Outcomes from Milestone 4 (Querying the data):](#outcomes-from-milestone-4-querying-the-data)
+- [Installation instructions](#installation-instructions)
+- [Usage instructions](#usage-instructions)
+- [File structure of the project](#file-structure-of-the-project)
+- [Languages](#languages)
+- [License information](#license-information)
+- [Appendix](#appendix)
+- [Project Milestones](#project-milestones)
+    - [Milestone 1: Environment set up](#milestone-1-environment-set-up)
+    - [Outcomes from Milestone 1 (Setting up the environment):](#outcomes-from-milestone-1-setting-up-the-environment-1)
+    - [Milestone 2: Extract and clean the data from the data sources](#milestone-2-extract-and-clean-the-data-from-the-data-sources)
+    - [Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):](#outcomes-from-milestone-2-extracting-and-cleaning-the-data-from-the-data-sources-1)
+    - [Milestone 3: Create the database scheme](#milestone-3-create-the-database-scheme)
+    - [Outcomes from Milestone 3 (Creating the database schema):](#outcomes-from-milestone-3-creating-the-database-schema-1)
+    - [Milestone 4: Querying the data](#milestone-4-querying-the-data)
+    - [Outcomes from Milestone 4 (Querying the data):](#outcomes-from-milestone-4-querying-the-data-1)
 
 # A description of the project
 The Multinational Retail Data Centralisation (MRDC) Project aims to address the challenge of their sales data being spread across many different data sources (AWS RSD, AWS S3 and API) and formats (PDF, CSV, and JSON). This hinders accessibility and analysis of the data. The project's primary objective is to establish a centralised database system that consolidates all sales data into a single location together with a star-based schema. This centralised repository will serve as the primary source of truth for sales data, enabling easy access and analysis for team members. The project involves storing up-to-date sales data in the database and developing querying mechanisms to generate the latest metrics for business analysis and decision-making.
@@ -289,6 +310,8 @@ Screen shot of EXPLORER from `VS Code` containing the above contents:
 
 # License information
 
+This project is licensed under the terms of the [MIT License](LICENSE.md). Please see the [LICENSE.md](LICENSE.md) file for details.
+
 # Appendix
 
 # Project Milestones
@@ -305,7 +328,7 @@ Screen shot of EXPLORER from `VS Code` containing the above contents:
 
 - Task 1: Set up GitHub. 
 
-## **Outcomes from Milestone 1 (Setting up the environment):**
+## **Outcomes from Milestone 1:**
 Prerequisites and setup of laptop and `GitHub` were successful. The project can now be saved and tracked for changes via `Git` and `GitHub`. `VS Code` was used for writing the code.
 
 ## Milestone 2: Extract and clean the data from the data sources
@@ -342,16 +365,16 @@ Prerequisites and setup of laptop and `GitHub` were successful. The project can 
 - Task 2: Initialise the three project Classes. Define the scripts and Classes you will use to extract and clean the data from multiple data sources.
 The Class methods won't be defined in this step yet. They will be defined when required in the subsequent tasks.
 
-        Step 1:
-        Create a new Python script named data_extraction.py and within it, create a class named DataExtractor.
-        This class will work as a utility class, in it you will be creating methods that help extract data from different data sources.
-        The methods contained will be fit to extract data from a particular data source, these sources will include CSV files, an API and an S3 bucket.
+    - Step 1:
+    Create a new Python script named data_extraction.py and within it, create a class named DataExtractor.
+    This class will work as a utility class, in it you will be creating methods that help extract data from different data sources.
+    The methods contained will be fit to extract data from a particular data source, these sources will include CSV files, an API and an S3 bucket.
 
-        Step 2:
-        Create another script named database_utils.py and within it, create a class DatabaseConnector which you will use to connect with and upload data to the database.
+   - Step 2:
+    Create another script named database_utils.py and within it, create a class DatabaseConnector which you will use to connect with and upload data to the database.
 
-        Step 3:
-        Finally, create a script named data_cleaning.py this script will contain a class DataCleaning with methods to clean data from each of the data sources.
+    - Step 3:
+    Finally, create a script named data_cleaning.py this script will contain a class DataCleaning with methods to clean data from each of the data sources.
 
 - Prerequisites prior to task:
     1. File Manipulation
@@ -390,65 +413,65 @@ The Class methods won't be defined in this step yet. They will be defined when r
 
 - Task 3: Extract and clean the user data. The historical data of users is currently stored in an AWS database in the cloud. Now create methods in your DataExtractor and DatabaseConnector class which help extract the information from an AWS RDS database.
 
-        Step 1:
-        Create a db_creds.yaml file containing the database credentials, they are as follows:
+    - Step 1:
+    Create a db_creds.yaml file containing the database credentials, they are as follows:
 
-        RDS_HOST: *private*.*private*.eu-west-1.rds.amazonaws.com
-        RDS_PASSWORD: *private*   
-        RDS_USER: *private*
-        RDS_DATABASE: postgres
-        RDS_PORT: 5432
+    RDS_HOST: *private*.*private*.eu-west-1.rds.amazonaws.com
+    RDS_PASSWORD: *private*   
+    RDS_USER: *private*
+    RDS_DATABASE: postgres
+    RDS_PORT: 5432
 
-        You should add your db_creds.yaml file to the .gitignore file in your repository, so that the database credentials are not uploaded to your public GitHub repository.
-        If you don't currently have a .gitignore file, you can create one by typing touch .gitignore in the terminal. 
-        Then just add the names of any files you don't want git to track.
+    You should add your db_creds.yaml file to the .gitignore file in your repository, so that the database credentials are not uploaded to your public GitHub repository.
+    If you don't currently have a .gitignore file, you can create one by typing touch .gitignore in the terminal. 
+    Then just add the names of any files you don't want git to track.
 
-        Now you will need to develop methods in your DatabaseConnector class to extract the data from the database.
+    Now you will need to develop methods in your DatabaseConnector class to extract the data from the database.
 
-        Step 2:
-        Create a method read_db_creds this will read the credentials yaml file and return a dictionary of the credentials.
-        You will need to pip install PyYAML and import yaml to do this.
+    - Step 2:
+    Create a method read_db_creds this will read the credentials yaml file and return a dictionary of the credentials.
+    You will need to pip install PyYAML and import yaml to do this.
 
-        Step 3:
-        Now create a method init_db_engine which will read the credentials from the return of read_db_creds and initialise and return an sqlalchemy database engine.
+    - Step 3:
+    Now create a method init_db_engine which will read the credentials from the return of read_db_creds and initialise and return an sqlalchemy database engine.
 
-        Step 4:
-        Using the engine from init_db_engine create a method list_db_tables to list all the tables in the database so you know which tables you can extract data from.
-        Develop a method inside your DataExtractor class to read the data from the RDS database.
+    - Step 4:
+    Using the engine from init_db_engine create a method list_db_tables to list all the tables in the database so you know which tables you can extract data from.
+    Develop a method inside your DataExtractor class to read the data from the RDS database.
 
-        Step 5:
-        Develop a method called read_rds_table in your DataExtractor class which will extract the database table to a pandas DataFrame.
+    - Step 5:
+    Develop a method called read_rds_table in your DataExtractor class which will extract the database table to a pandas DataFrame.
 
-        It will take in an instance of your DatabaseConnector class and the table name as an argument and return a pandas DataFrame.
-        Use your list_db_tables method to get the name of the table containing user data.
-        Use the read_rds_table method to extract the table containing user data and return a pandas DataFrame.
+    It will take in an instance of your DatabaseConnector class and the table name as an argument and return a pandas DataFrame.
+    Use your list_db_tables method to get the name of the table containing user data.
+    Use the read_rds_table method to extract the table containing user data and return a pandas DataFrame.
 
-        Step 6:
-        Create a method called clean_user_data in the DataCleaning class which will perform the cleaning of the user data.
+    - Step 6:
+    Create a method called clean_user_data in the DataCleaning class which will perform the cleaning of the user data.
 
-        You will need clean the user data, look out for NULL values, errors with dates, incorrectly typed values and rows filled with the wrong information.
+    You will need clean the user data, look out for NULL values, errors with dates, incorrectly typed values and rows filled with the wrong information.
 
-        Step 7:
-        Now create a method in your DatabaseConnector class called upload_to_db. This method will take in a Pandas DataFrame and table name to upload to as an argument.
+    - Step 7:
+    Now create a method in your DatabaseConnector class called upload_to_db. This method will take in a Pandas DataFrame and table name to upload to as an argument.
 
-        Step 8:
-        Once extracted and cleaned use the upload_to_db method to store the data in your sales_data database in a table named dim_users.
+    - Step 8:
+    Once extracted and cleaned use the upload_to_db method to store the data in your sales_data database in a table named dim_users.
 
 - Task 4: Extracting users and cleaning card details. The users card details are stored in a PDF document in an AWS S3 bucket.
 
-        Step 1:
-        Install the Python package tabula-py this will help you to extract data from a pdf document. The documentation can be found here .
+    - Step 1:
+    Install the Python package tabula-py this will help you to extract data from a pdf document. The documentation can be found here .
 
-        Step 2:
-        Create a method in your DataExtractor class called retrieve_pdf_data, which takes in a link as an argument and returns a pandas DataFrame.
-        Use the tabula-py Python package, imported with tabula to extract all pages from the pdf document at following link .
-        Then return a DataFrame of the extracted data.
+    - Step 2:
+    Create a method in your DataExtractor class called retrieve_pdf_data, which takes in a link as an argument and returns a pandas DataFrame.
+    Use the tabula-py Python package, imported with tabula to extract all pages from the pdf document at following link .
+    Then return a DataFrame of the extracted data.
 
-        Step 3:
-        Create a method called clean_card_data in your DataCleaning class to clean the data to remove any erroneous values, NULL values or errors with formatting.
+    - Step 3:
+    Create a method called clean_card_data in your DataCleaning class to clean the data to remove any erroneous values, NULL values or errors with formatting.
 
-        Step 4:
-        Once cleaned, upload the table with your upload_to_db method to the database in a table called dim_card_details.
+    - Step 4:
+    Once cleaned, upload the table with your upload_to_db method to the database in a table called dim_card_details.
 
 - Prerequisites prior to task:
     1. Basics of APIs and Communication Protocols
@@ -456,27 +479,27 @@ The Class methods won't be defined in this step yet. They will be defined when r
 
 - Task 5: Extract and clean the details of each store. The store data can be retrieved through the use of an API. The API has two GET methods. One will return the number of stores in the business and the other to retrieve a store given a store number. To connect to the API you will need to include the API key to connect to the API in the method header. Create a dictionary to store the header details it will have a key x-api-key with the value *private* (can not be shared here for security). The two endpoints for the API are as follows:
 
-Examples:
-Retrieve a store: https://*private*.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}
-Return the number of stores: https://*private*.execute-api.eu-west-1.amazonaws.com/prod/
-*Exact links can not be shared here for security.*
+    Examples:
+    Retrieve a store: https://*private*.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}
+    Return the number of stores: https://*private*.execute-api.eu-west-1.amazonaws.com/prod/
+    *Exact links can not be shared here for security.*
 
-        Step 1:
-        Create a method in your DataExtractor class called list_number_of_stores which returns the number of stores to extract. 
-        It should take in the number of stores endpoint and header dictionary as an argument.
+    - Step 1:
+    Create a method in your DataExtractor class called list_number_of_stores which returns the number of stores to extract. 
+    It should take in the number of stores endpoint and header dictionary as an argument.
 
-        Step 2:
-        Now that you know how many stores need to be extracted from the API.
+    - Step 2:
+    Now that you know how many stores need to be extracted from the API.
 
-        Step 3:
-        Create another method retrieve_stores_data which will take the retrieve a store endpoint as an argument and extracts all the 
-        stores from the API saving them in a pandas DataFrame.
+    - Step 3:
+    Create another method retrieve_stores_data which will take the retrieve a store endpoint as an argument and extracts all the 
+    stores from the API saving them in a pandas DataFrame.
 
-        Step 4:
-        Create a method in the DataCleaning class called_clean_store_data which cleans the data retrieve from the API and returns a pandas DataFrame.
+    - Step 4:
+    Create a method in the DataCleaning class called_clean_store_data which cleans the data retrieve from the API and returns a pandas DataFrame.
 
-        Step 5:
-        Upload your DataFrame to the database using the upload_to_db method storing it in the table dim_store_details.
+    - Step 5:
+    Upload your DataFrame to the database using the upload_to_db method storing it in the table dim_store_details.
 
 - Prerequisites prior to task:
     1. Introduction to Amazon S3
@@ -485,42 +508,44 @@ Return the number of stores: https://*private*.execute-api.eu-west-1.amazonaws.c
 
 - Task 6: Extract and clean the product details. The information for each product the company currently sells is stored in CSV format in an S3 bucket on AWS.
 
-        Step 1:
-        Create a method in DataExtractor called extract_from_s3 which uses the boto3 package to download and extract the information returning a pandas DataFrame.
+    - Step 1:
+    Create a method in DataExtractor called extract_from_s3 which uses the boto3 package to download and extract the information returning a pandas DataFrame.
 
-        The S3 address for the products data is the following s3://*private*/products.csv (exact links can not be shared for security). 
-        The method will take this address in as an argument and return the pandas DataFrame.
+    The S3 address for the products data is the following s3://*private*/products.csv (exact links can not be shared for security). 
+    The method will take this address in as an argument and return the pandas DataFrame.
 
-        You will need to be logged into the AWS CLI before you retrieve the data from the bucket.
+    You will need to be logged into the AWS CLI before you retrieve the data from the bucket.
 
-        Step 2:
-        Create a method in the DataCleaning class called convert_product_weights this will take the products DataFrame as an argument and return the products DataFrame.
-        If you check the weight column in the DataFrame the weights all have different units.
-        Convert them all to a decimal value representing their weight in kg. Use a 1:1 ratio of ml to g as a rough estimate for the rows containing ml.
-        Develop the method to clean up the weight column and remove all excess characters then represent the weights as a float.
+    - Step 2:
+    Create a method in the DataCleaning class called convert_product_weights this will take the products DataFrame as an argument and return the products DataFrame.
+    If you check the weight column in the DataFrame the weights all have different units.
+    Convert them all to a decimal value representing their weight in kg. Use a 1:1 ratio of ml to g as a rough estimate for the rows containing ml.
+    Develop the method to clean up the weight column and remove all excess characters then represent the weights as a float.
 
-        Step 3:
-        Now create another method called clean_products_data this method will clean the DataFrame of any additional erroneous values.
+    - Step 3:
+    Now create another method called clean_products_data this method will clean the DataFrame of any additional erroneous values.
 
-        Step 4:
-        Once complete insert the data into the sales_data database using your upload_to_db method storing it in a table named dim_products.
+    - Step 4:
+    Once complete insert the data into the sales_data database using your upload_to_db method storing it in a table named dim_products.
 
 - Task 7: Retrieve and clean the orders table. This table which acts as the single source of truth for all orders the company has made in the past is stored in a database on AWS RDS.
 
-        Step 1:
-        Using the database table listing methods you created earlier list_db_tables, list all the tables in the database to get the name of the table containing all information about the product orders.
+    - Step 1:
+    Using the database table listing methods you created earlier list_db_tables. List all the tables in the database to get the name of the table containing all information about the product orders.
 
-        Step 2:
-        Extract the orders data using the read_rds_table method you create earlier returning a pandas DataFrame.
+    - Step 2:
+    Extract the orders data using the read_rds_table method you create earlier returning a pandas DataFrame.
 
-        Step 3:
-        Create a method in DataCleaning called clean_orders_data which will clean the orders table data.
-        You should remove the columns, first_name, last_name and 1 to have the table in the correct form before uploading to the database.
-        You will see that the orders data contains column headers which are the same in other tables.
-        This table will act as the source of truth for your sales data and will be at the center of your star based database schema.
+    - Step 3:
+    Create a method in DataCleaning called clean_orders_data which will clean the orders table data.
+    You should remove the columns, first_name, last_name and 1 to have the table in the correct form before uploading to the database.
+    You will see that the orders data contains column headers which are the same in other tables.
+    This table will act as the source of truth for your sales data and will be at the center of your star based database schema.
 
-        Step 4:
-        Once cleaned upload using the upload_to_db method and store in a table called orders_table.
+    - Step 4:
+    Once cleaned upload using the upload_to_db method and store in a table called orders_table.
+
+
 
 - Task 8: Retrieve and clean the date events data. The final source of data is a JSON file containing the details of when each sale happened, as well as related attributes. The file is currently stored on S3 and can be found at the following link https://*private*.s3.eu-west-1.amazonaws.com/date_details.json (exact links can not be shared for security). Extract the file and perform any necessary cleaning, then upload the data to the database naming the table dim_date_times.
 
@@ -528,18 +553,18 @@ Return the number of stores: https://*private*.execute-api.eu-west-1.amazonaws.c
     1. Github README 
 
 - Task 9: Update the latest changes to GitHub. Update your GitHub repository with the latest code changes from your local project. Start by staging your modifications and creating a commit. Then, push the changes to your GitHub repository.
-Additionally, document your progress by adding to your GitHub README file. You can refer to the relevant lesson in the prerequisites for this task for more information.
-At minimum, your README file should contain the following information:
+    Additionally, document your progress by adding to your GitHub README file. You can refer to the relevant lesson in the prerequisites for this task for more information.
+    At minimum, your README file should contain the following information:
 
-        Project Title
-        Table of Contents, if the README file is long
-        A description of the project: what it does, the aim of the project, and what you learned
-        Installation instructions
-        Usage instructions
-        File structure of the project
-        License information
+        - Project Title
+        - Table of Contents, if the README file is long
+        - A description of the project: what it does, the aim of the project, and what you learned
+        - Installation instructions
+        - Usage instructions
+        - File structure of the project
+        - License information
 
-You don't have to write all of this at once, but make sure to update your README file as you go along, so that you don't forget to add anything.
+    You don't have to write all of this at once, but make sure to update your README file as you go along, so that you don't forget to add anything.
 
 - Task 10: Refactor and optimise current code. Refactoring will be a continuous and constant process, but this is the time to really scrutinise your code. You can use the following list to make improvements:
     - Meaningful Naming: Use descriptive names for methods and variables to enhance code readability. For example, create_list_of_website_links() over links() and use for element in web_element_list instead of for i in list.
@@ -565,7 +590,7 @@ You don't have to write all of this at once, but make sure to update your README
     ```bash
     conda list --export > conda_requirements.txt
 
-## **Outcomes from Milestone 2 (Extracting and cleaning the data from the data sources):**
+## **Outcomes from Milestone 2:**
 Milestone 2 continues from Milestone 1. The company's current up-to-date data is stored in a database locally titled `sales_data` in `pgAdmin 4` so that it is accessed from one centralised location and acts as a single point of reference for sales data. Data has been extracted from various sources in JSON, CSV, and PDF formats hosted on different platforms. Data was cleaned using `pandas` and stored in a local `PostgreSQL` database, `pgAdmin 4` using `SQLAlchemy`. Progress was updated to the repository on `GitHub` and code reviewed for better maintainability and efficiency.
 
 A `db_cred.yaml` file was created containing the credentials and subsequently all other future sensitive information. This file was added to `.gitignore` to not upload any sensitive information to the public `GitHub` for security purposes.
@@ -610,7 +635,7 @@ These classes were all called within a `main.py` file where the ETL (Extract, Tr
             | product_code     | TEXT               | VARCHAR(?)         |
             | product_quantity | BIGINT             | SMALLINT           |
 
-The ? in VARCHAR should be replaced with an integer representing the maximum length of the values in that column.
+    The ? in VARCHAR should be replaced with an integer representing the maximum length of the values in that column.
 
 - Task 2: Cast the columns of the dim_users to the correct data types. The column required to be changed in the users table are as follows:
 
@@ -625,7 +650,7 @@ The ? in VARCHAR should be replaced with an integer representing the maximum len
 
 - Task 3: Update the dim_store_details table. There are two latitude columns in the store details table. Using SQL, merge one of the columns into the other so you have one latitude column.
 
-Then set the data types for each column as shown below:
+    Then set the data types for each column as shown below:
 
             | store_details_table | current data type | required data type     |
             |---------------------|-------------------|------------------------|
@@ -640,7 +665,7 @@ Then set the data types for each column as shown below:
             | continent           | TEXT              | VARCHAR(255)           |
 
 
-There is a row that represents the business's website change the location column values from N/A to NULL.
+    There is a row that represents the business's website change the location column values from N/A to NULL.
 
 - Task 4: Make change to the dim_products table for the delivery team. You will need to do some work on the products table before casting the data types correctly.
 The product_price column has a £ character which you need to remove using SQL.
@@ -703,17 +728,17 @@ This makes the star-based database schema complete.
 Additionally, document your progress by adding to your GitHub README file. You can refer to the relevant lesson in the prerequisites for this task for more information.
 At minimum, your README file should contain the following information:
 
-        Project Title
-        Table of Contents, if the README file is long
-        A description of the project: what it does, the aim of the project, and what you learned
-        Installation instructions
-        Usage instructions
-        File structure of the project
-        License information
+        - Project Title
+        - Table of Contents, if the README file is long
+        - A description of the project: what it does, the aim of the project, and what you learned
+        - Installation instructions
+        - Usage instructions
+        - File structure of the project
+        - License information
 
 You don't have to write all of this at once, but make sure to update your README file as you go along, so that you don't forget to add anything.
 
-## **Outcomes from Milestone 3 (Creating the database schema):**
+## **Outcomes from Milestone 3:**
 Milestone 3 continues from Milestone 2. Columns in the following tables were all cast to the correct data types using `SQL`, ensuring consistency and accuracy: orders_table, dim_users, dim_store_details, dim_products, dim_date_times, and dim_card_details.
 
 It was found the dim_store_details table did not require merging the 'latitude' columns as the data in the 'lat' column has all been isolated and found to not be of use, and the column dropped.
@@ -905,7 +930,7 @@ Your boss is excited that you now have the schema for the database and all the s
     CROSS JOIN total_sales_all
     ORDER BY average_sum_of_payments DESC;
     ```
-     ![M4T5](images\M4T5.png)  
+     ![M4T5](_07_images\M4T5.png)  
 
 - **Note: The question below was asked in two different ways. For clarity I have reframed them into two parts. The difference being one looks at which month in the year whilst the other months.**
 - **Task 6a: Which month in each year produced the highest cost of sales?**
@@ -1075,56 +1100,9 @@ Your boss is excited that you now have the schema for the database and all the s
 
 - **Task 10: Update the latest code changes to GitHub.**
 
-## **Outcomes from Milestone 4 (Querying the data):**
+## **Outcomes from Milestone 4:**
 Milestone 4 continues from Milestone 3. Now the schema for the database and all the sales_data is in one location. Queries were run against this for data-driven decisions and to get a better understanding of its sales.
 
 Overall, this section focused on developing your skill over the understanding of `SELECT`, `JOIN`, `GROUP BY`, and aggregate functions. The ability to break down complex queries using subqueries and CTEs. Being able to aggregate data for insight. It developed competence in being able to manipulate data for meaningful insights. It allowed the ability to analyse trends and present findings visually. Familiarity was gained with the database schema structure, which made for more efficient querying. It helped with problem-solving skills in the capacity to interpret business needs and translate them into effective `SQL` queries. Overall, these skills empower efficient querying and help to facilitate informed decision-making.
 
-
-
-
-
-
-
-
-## This is an H2 heading
-[this is a hyperlink](https://www.google.com)
-
-- This
-- Is
-- A
-- Bulletpoint 
-- List
-
-1. This 
-2. Is 
-3. A
-4. Numbered
-5. List 
-
-### This is an H3 Heading
-
-This is how you add an image:
-![image info](/pictures/image.png)
-
-You can also use any HTML you want in a Markdown file:
-<br>
-<p align=center><img src=images/example_image.png width=900></p>
-<br>
-
-
-- Answer some of these questions in the next few bullet points. What have you built? What technologies have you used? Why have you used those?
-- Example: The FastAPI framework allows for fast and easy construction of APIs and is combined with pydantic, which is used to assert the data types of all incoming data to allow for easier processing later on. The server is ran locally using uvicorn, a library for ASGI server implementation.
-```python
-"""Insert your code here"""
-```
-> Insert an image/screenshot of what you have built so far here.
-
-Overall, this project exposes you to Python coding with emphasis on writing classes, methods, and object-oriented programming. You require the knowledge of using the command line, VS Code software, git for version control, and GitHub for backing up of work. This project was focused around the ETL pipeline of gathering sales data, storing away private credentials, cleaning up of data, uploading to a database and querying the data via knowledge of SQL. 
-
-This project helps you refelect in logical steps on the structure of the `python` code written in Visual Studio Code (VS Code) an integrated development enviroment (IDE). The projects code was maanaged via `Git` and `GitHub` for version control and tracking changes. It allows you to handle extracting data from various sources using packages like `tablula-py`, `boto3` and `SQLAlchemy` and performing different types of cleaning on data via `pandas`. Checks have been placed in the code to account for any errors that may be incorporated occured during scritping of the code. `SQL` and `SQLTools` was used to write queries and to interact with the database.
-
-
-#####################################################################################
-##################################################################################
 

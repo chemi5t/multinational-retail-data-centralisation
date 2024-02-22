@@ -1099,6 +1099,21 @@ Your boss is excited that you now have the schema for the database and all the s
     ** ![M4T8](_07_images\M4T8.png)  **
 
 - **Task 10: Update the latest code changes to GitHub.**
+    
+    Update your GitHub repository with the latest code changes from your local project. Make sure to save the SQL statements for your queries and table alterations to a .sql file before doing your final commit. Start by staging your modifications and creating a commit. Then, push the changes to your GitHub repository.
+
+    Additionally, document your progress by adding to your GitHub README file. You can refer to the relevant lesson in the prerequisites for this task for more information.
+
+    At minimum, your README file should contain the following information:
+
+    - Project Title
+    - Table of Contents, if the README file is long
+    - A description of the project: what it does, the aim of the project, and what you learned
+    - Installation instructions
+    - Usage instructions
+    - File structure of the project
+    - License information
+    - You don't have to write all of this at once, but make sure to update your README file as you go along, so that you don't forget to add anything.
 
 ## **Outcomes from Milestone 4:**
 Milestone 4 continues from Milestone 3. Now the schema for the database and all the sales_data is in one location. Queries were run against this for data-driven decisions and to get a better understanding of its sales.

@@ -74,7 +74,7 @@ Overall, this project offers a comprehensive learning experience encompassing va
 
 Finally, the scope for the MRDC project can be expanded in a number of way. To list a few:
 
-1. After extraction of tables; to convert these saved `.csv` files to `.ipynb` files locally rather than direct from source. This would allow a more general function to to perform this task.
+1. After extraction of tables; to convert these saved `.csv` files to `.ipynb` files locally rather than direct from source. This would allow a more general function to perform this task.
 2. Perform extractions across the tables in one method, followed by clean and then upload. This may help with regard to bug fixing if required. 
 3. Further factorising of code can occur. 
     - The saving of `.csv` and `.ipynb` could be made into a function and thus reducing lines of similar code.

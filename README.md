@@ -24,7 +24,7 @@
     - [Outcomes from Milestone 4 (Querying the data):](#outcomes-from-milestone-4-querying-the-data-1)
 
 # A description of the project
-The Multinational Retail Data Centralisation (MRDC) Project aims to address the challenge of their sales data being spread across many different data sources (AWS RSD, AWS S3 and API) and formats (PDF, CSV, and JSON). This hinders accessibility and analysis of the data. The project's primary objective is to establish a centralised database system that consolidates all sales data into a single location together with a star-based schema. This centralised repository will serve as the primary source of truth for sales data, enabling easy access and analysis for team members. The project involves storing up-to-date sales data in the database and developing querying mechanisms to generate the latest metrics for business analysis and decision-making.
+The Multinational Retail Data Centralisation (MRDC) Project aims to address the challenge of their sales data being spread across many different data sources (AWS RDS, AWS S3 and API) and formats (PDF, CSV, and JSON). This hinders accessibility and analysis of the data. The project's primary objective is to establish a centralised database system that consolidates all sales data into a single location together with a star-based schema. This centralised repository will serve as the primary source of truth for sales data, enabling easy access and analysis for team members. The project involves storing up-to-date sales data in the database and developing querying mechanisms to generate the latest metrics for business analysis and decision-making.
 
 In the `/root` (multinational-retail-data-centralisation) folder, the `main.py` file runs the various methods shown below that each perform the Extract, Transform, and Load (ETL) process for the six tables.
 
@@ -1074,13 +1074,13 @@ Your boss is excited that you now have the schema for the database and all the s
 
     Sales would like the get an accurate metric for how quickly the company is making sales. Determine the average time taken between each sale grouped by year, the query should return the following information:
 
-            | year | actual_time_taken                                      |
-            |------|--------------------------------------------------------|
-            | 2013 | {"hours": 2, "minutes": 17, "seconds": 12, "millise... |
-            | 1993 | {"hours": 2, "minutes": 15, "seconds": 35, "millise... |
-            | 2002 | {"hours": 2, "minutes": 13, "seconds": 50, "millise... |
-            | 2022 | {"hours": 2, "minutes": 13, "seconds": 6,  "millise... |
-            | 2008 | {"hours": 2, "minutes": 13, "seconds": 2,  "millise... |
+            | year | actual_time_taken                                     |
+            |------|-------------------------------------------------------|
+            | 2013 | "hours": 2, "minutes": 17, "seconds": 12, "millise... |
+            | 1993 | "hours": 2, "minutes": 15, "seconds": 35, "millise... |
+            | 2002 | "hours": 2, "minutes": 13, "seconds": 50, "millise... |
+            | 2022 | "hours": 2, "minutes": 13, "seconds": 6,  "millise... |
+            | 2008 | "hours": 2, "minutes": 13, "seconds": 2,  "millise... |
 
     Hint: You will need the SQL command LEAD.
 
@@ -1089,12 +1089,39 @@ Your boss is excited that you now have the schema for the database and all the s
     ```sql
     -- Task 9: How quickly is the company making sales?
     -- work in progress
-    SELECT ddt.year, ROUND(8760/COUNT(ddt.year)::numeric, 4) AS average_time_between_sales_in_a_year
-    FROM orders_table AS ot
-    JOIN dim_date_times AS ddt
-    ON ot.date_uuid = ddt.date_uuid
-    GROUP BY ddt.year
-    ORDER BY average_time_between_sales_in_a_year DESC;
+    WITH timestamp_table AS(
+    -- 	Create a temporary table for the timestamp using the year, month, day and timestamp column
+	SELECT
+		to_timestamp(year || '-' || month || '-' || day || '-' || timestamp, 'YYYY-MM-DD HH24:MI:SS')::timestamp  AS concat_timestamp
+	From dim_date_times
+    ), extract_table AS (
+    -- 	Extract the hour, minute, and seconds from the temporary timestamp_table
+        SELECT 
+            concat_timestamp,
+            EXTRACT(YEAR FROM concat_timestamp) AS year,
+            EXTRACT(HOUR FROM concat_timestamp) AS hour,
+            EXTRACT(MINUTE FROM concat_timestamp) AS minute,
+            EXTRACT(SECOND FROM concat_timestamp) AS second
+        FROM timestamp_table
+    ), extract_lead_table AS (
+        SELECT
+    -- 	Compute the metrics using the LEAD function
+            year,
+            hour,
+            LEAD(hour, 1) OVER (PARTITION BY year) AS actual_hour_taken,
+            LEAD(minute, 1) OVER (PARTITION BY year) AS actual_minute_taken,
+            LEAD(second, 1) OVER (PARTITION BY year) AS actual_second_taken
+        FROM
+            extract_table
+    )
+    SELECT
+    -- Compute the average time grouped over the years
+        year,
+        '"hours": '|| ROUND(AVG(actual_hour_taken)) || ' "minutes": '|| ROUND(AVG(actual_minute_taken)) || ' "seconds": ' || ROUND(AVG(actual_second_taken)) || ' "millise..."' AS actual_time_taken
+    FROM
+        extract_lead_table
+    GROUP BY
+        year
     ```
     ** ![M4T8](_07_images\M4T8.png)  **
 
